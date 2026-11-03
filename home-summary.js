@@ -16,11 +16,10 @@
       ? `今天已记录 ${Math.floor(focusSeconds / 3600)}h ${Math.floor(focusSeconds % 3600 / 60)}m`
       : (main ? '来自今天的排程 · 完成后会继续显示下一件事。' : '在周视图或待办任务里添加今天要做的事。');
 
-    const done = document.querySelector('.metrics .metric:last-child');
-    if (done) {
-      done.querySelector('.metric-value').textContent = dayTasks.length ? `${dayTasks.filter(t => t.done).length} / ${dayTasks.length}` : '—';
-      done.querySelector('.metric-sub').textContent = dayTasks.length ? '今日任务完成情况' : '今天暂无任务';
-    }
+    const progressMetric = document.querySelector('#progressMetric');
+    const progressSub = document.querySelector('#progressSub');
+    if (progressMetric) progressMetric.textContent = dayTasks.length ? `${dayTasks.filter(t => t.done).length} / ${dayTasks.length}` : '—';
+    if (progressSub) progressSub.textContent = dayTasks.length ? '今日任务完成情况' : '今天暂无任务';
 
     document.querySelector('#focusMetric').textContent = focusSeconds ? `${Math.floor(focusSeconds / 3600)}h ${pad(Math.floor(focusSeconds % 3600 / 60))}m` : '—';
 
@@ -38,11 +37,10 @@
     const records = (window.magicianFinance || []).filter(x => x.date?.startsWith(month));
     const income = records.filter(x => x.type === 'income').reduce((n, x) => n + Number(x.amount || 0), 0);
     const ads = records.filter(x => x.type === 'ads').reduce((n, x) => n + Number(x.amount || 0), 0);
-    const summary = document.querySelector('.metrics .metric:nth-child(3)');
-    if (summary) {
-      summary.querySelector('.metric-value').textContent = records.length ? money(income - ads) : '—';
-      summary.querySelector('.metric-sub').textContent = records.length ? `收入 ${money(income)} · 投流 ${money(ads)}` : '尚无记录';
-    }
+    const financeMetric = document.querySelector('#financeMetric');
+    const financeSub = document.querySelector('#financeSub');
+    if (financeMetric) financeMetric.textContent = records.length ? money(income - ads) : '—';
+    if (financeSub) financeSub.textContent = records.length ? `收入 ${money(income)} · 投流 ${money(ads)}` : '尚无记录';
     const finance = document.querySelector('.right .panel:last-child');
     if (finance) {
       finance.querySelector('.panel-head .subtle').textContent = `${Number(month.slice(5))} 月`;

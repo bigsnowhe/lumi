@@ -22,12 +22,12 @@
 
   // New task: form modal
   document.querySelector('#addTask').onclick = () => modal('新任务',
-    `<label>任务名称<input name="name" required placeholder="今天要做什么？"></label><label>日期<input name="date" type="date" required value="${fmt(calendarDate)}"></label><label>状态<select name="done"><option value="0">待完成</option><option value="1">已完成</option></select></label>`,
+    `<label>任务名称<input name="name" required placeholder="今天要做什么？"></label><label>日期<input name="date" type="date" required value="${fmt(calendarDate)}"></label><label>状态<select name="done"><option value="0">待完成</option><option value="1">已完成</option></select></label><label style="display:flex;align-items:center;gap:6px;margin-top:4px"><input type="checkbox" name="minor" value="1" style="width:auto"> 小事（紧凑显示，不占卡片空间）</label>`,
     f => {
       const n = String(f.get('name') || '').trim(), date = String(f.get('date') || '');
       if (!n || !date) return false;
       const type = classifyTask(n, new Date(date + 'T12:00:00'));
-      tasks.push({ id: Date.now(), date, n, ...type, done: f.get('done') === '1' });
+      tasks.push({ id: Date.now(), date, n, ...type, done: f.get('done') === '1', minor: !!f.get('minor') });
       render(); pushCloud?.(); toast(`已加入计划 · ${type.cat}`);
     });
 
@@ -51,22 +51,6 @@
   const _render = render;
   render = () => { _render(); refreshOptions() };
   refreshOptions();
-
-  // Sidebar toggle
-  const side = document.querySelector('.side');
-  const toggle = document.createElement('button');
-  toggle.textContent = '‹'; toggle.title = '收起左侧菜单';
-  toggle.style.cssText = 'position:fixed;left:202px;top:196px;z-index:25;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #e7e5dd;color:#596057;font-size:20px;line-height:20px;box-shadow:0 4px 10px #0000000d';
-  document.body.appendChild(toggle);
-  let closed = false;
-  toggle.onclick = () => {
-    closed = !closed;
-    side.style.display = closed ? 'none' : '';
-    document.querySelector('.app').style.gridTemplateColumns = closed ? '1fr' : '188px minmax(0,1fr)';
-    toggle.style.left = closed ? '16px' : '202px';
-    toggle.textContent = closed ? '›' : '‹';
-    toggle.title = closed ? '展开左侧菜单' : '收起左侧菜单';
-  };
 
   // Recurring tasks: materialize templates into actual task instances
   const materialize = () => {

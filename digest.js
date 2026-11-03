@@ -116,7 +116,7 @@
     inventory:window.magicianInventory||[],recipes:window.magicianRecipes||[],
     weeklyMeals:window.magicianMealPlan||[],
     finance:(window.magicianFinance||[]).slice(-40),
-    instructions:'你是 Lumi。用户说完成了某事，就给出可执行的 preview；新事项用 createdTasks 的 name、date、completed:true，有用时同时给 timeEntries。当前 context 才代表已保存状态，历史回复中的“已处理”不算。避免重复记录；保留采购数量与单位，不猜测。简短回复，不主动输出负荷分析；只有用户要求复盘或规划时才分析。确认前不要声称已写入。',
+    instructions:'你是 Lumi。用户说完成了某事，就给出可执行的 preview；新事项用 createdTasks 的 name、date、completed:true，有用时同时给 timeEntries。当前 context 才代表已保存状态，历史回复中的”已处理”不算。避免重复记录；保留采购数量与单位，不猜测。简短回复，不主动输出负荷分析；只有用户要求复盘或规划时才分析。确认前不要声称已写入。对于零碎小事（如检查续费、取快递、回消息等不属于主要工作项的杂事），在 createdTasks 里加 minor:true，这类任务会紧凑显示。',
     categoryGuide:{'体态锻炼':['力量训练','有氧','普拉提','欧阳春晓','散步','做饭','备餐','采购食材','补充库存'],'美妆账号':['选题','写脚本（每月 1–20 日）','找素材','拍摄','剪辑视频','封面','发布','数据复盘'],'知识付费':['选题会','课程内容','写脚本（每月 21 日起）','直播','学员服务'],'其他工作项目':['合作项目','商务沟通','文创','代购','表格','出差','见师傅'],'休息 / 娱乐':['看电影','手账','弹钢琴','弹吉他','好友聚会'],scriptRule:'写脚本：每月 1–20 日归美妆账号；21 日起归知识付费。'}
   });
 
@@ -176,7 +176,7 @@
 
   function apply(){
     if(!pending)return;const p=pending.preview||{};
-    (p.createdTasks||[]).forEach((item,i)=>{const name=String(item.name||item.task||'').trim(),date=item.date;if(!name||!validDate(date))return;const existing=tasks.find(t=>t.date===date&&normalizeName(t.n)===normalizeName(name));if(existing){if(item.completed)existing.done=true;return}tasks.push({id:`lumi-${Date.now()}-${i}`,date,n:name,...classifyTask(name,new Date(date+'T12:00:00')),done:!!item.completed})});
+    (p.createdTasks||[]).forEach((item,i)=>{const name=String(item.name||item.task||'').trim(),date=item.date;if(!name||!validDate(date))return;const existing=tasks.find(t=>t.date===date&&normalizeName(t.n)===normalizeName(name));if(existing){if(item.completed)existing.done=true;return}tasks.push({id:`lumi-${Date.now()}-${i}`,date,n:name,...classifyTask(name,new Date(date+'T12:00:00')),done:!!item.completed,minor:!!item.minor})});
     (p.completedTasks||[]).forEach(item=>{const [task]=resolveTask(item);if(task)task.done=true});
     (p.rescheduledTasks||[]).forEach(item=>{const [task]=resolveTask(item,true);const date=item.toDate||item.newDate||item.date;if(task&&/^\d{4}-\d{2}-\d{2}$/.test(date))task.date=date});
     (p.timeEntries||[]).forEach((entry,i)=>{const seconds=timeSeconds(entry),date=entry.date||localToday(),activity=entry.activity||entry.name||'Lumi 补记';if(seconds>0&&!(window.magicianTimeLogs||[]).some(x=>x.date===date&&Number(x.seconds)===seconds&&normalizeName(x.activity)===normalizeName(activity)))(window.magicianTimeLogs=window.magicianTimeLogs||[]).unshift({id:Date.now()+i,date,activity,seconds,manual:true})});
