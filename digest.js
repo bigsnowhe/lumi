@@ -7,7 +7,7 @@
   let dragging=false,dragMoved=false,dragX=0,dragY=0,btnLeft=0,btnTop=0;
   const saveBtnPos=()=>{try{localStorage.setItem('lumi-btn-pos',JSON.stringify({right:b.style.right,bottom:b.style.bottom,left:b.style.left,top:b.style.top}))}catch{}};
   try{const saved=JSON.parse(localStorage.getItem('lumi-btn-pos')||'null');if(saved){if(saved.left){b.style.left=saved.left;b.style.right='auto'}else{b.style.right=saved.right}if(saved.top){b.style.top=saved.top;b.style.bottom='auto'}else{b.style.bottom=saved.bottom}}}catch{}
-  b.addEventListener('pointerdown',e=>{if(e.button!==0)return;dragging=true;dragMoved=false;b.style.cursor='grabbing';const rect=b.getBoundingClientRect();dragX=e.clientX-rect.left;dragY=e.clientY-rect.top;btnLeft=rect.left;btnTop=rect.top;b.setPointerCapture(e.pointerId)});
+  b.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();dragging=true;dragMoved=false;b.style.cursor='grabbing';const rect=b.getBoundingClientRect();dragX=e.clientX-rect.left;dragY=e.clientY-rect.top;btnLeft=rect.left;btnTop=rect.top;b.setPointerCapture(e.pointerId)});
   b.addEventListener('pointermove',e=>{if(!dragging)return;const x=e.clientX-dragX,y=e.clientY-dragY;if(!dragMoved&&Math.abs(x-btnLeft)<4&&Math.abs(y-btnTop)<4)return;dragMoved=true;b.style.left=Math.max(0,Math.min(x,innerWidth-b.offsetWidth))+'px';b.style.top=Math.max(0,Math.min(y,innerHeight-b.offsetHeight))+'px';b.style.right='auto';b.style.bottom='auto';positionPanel()});
   b.addEventListener('pointerup',()=>{if(dragging){dragging=false;b.style.cursor='grab';if(dragMoved){saveBtnPos();return}}});
   b.addEventListener('click',e=>{if(dragMoved){e.preventDefault();e.stopPropagation();dragMoved=false;return}open()});
