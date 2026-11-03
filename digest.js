@@ -167,8 +167,8 @@
     try{
       const dialogue=prior.map(m=>`${m.role==='user'?'用户':'Lumi'}：${m.content}`).join('\n');
       const prompt=`按 context.instructions 行事。关键细节缺失时只问一个问题。\n${dialogue?`最近对话：\n${dialogue}\n`:''}用户本次消息：${text}`;
-      const r=await fetch(`${CLOUD_URL}/functions/v1/lumi-ai`,{method:'POST',headers:{apikey:CLOUD_KEY,'Authorization':`Bearer ${cloudSession.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({prompt,context:currentContext()})});
-      const data=await r.json();if(!r.ok)throw new Error(data.error||'Lumi 暂时无法连接');
+      let r,data;for(let attempt=0;attempt<3;attempt++){r=await fetch(`${CLOUD_URL}/functions/v1/lumi-ai`,{method:'POST',headers:{apikey:CLOUD_KEY,'Authorization':`Bearer ${cloudSession.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({prompt,context:currentContext()})});data=await r.json();if(r.ok)break;if(/too busy|unavailable|overloaded|rate.limit/i.test(JSON.stringify(data))&&attempt<2){await new Promise(ok=>setTimeout(ok,2000*(attempt+1)));continue}break}
+      if(!r.ok)throw new Error(/too busy|unavailable|overloaded/i.test(JSON.stringify(data))?'DeepSeek 服务繁忙，请稍后再试':(data.error||'Lumi 暂时无法连接'));
       const purchases=parsePurchases(text),preview=data.preview||{};
       if(purchases.length){const parsedNames=new Set(purchases.map(x=>x.name));const unmatched=purchases.length>=(preview.inventoryChanges||[]).length?[]:(preview.inventoryChanges||[]).map(x=>typeof x==='string'?{name:x,amount:''}:{...x,amount:amountOf(x)}).filter(x=>!parsedNames.has(x.name));preview.inventoryChanges=[...purchases,...unmatched];data.needsConfirmation=true}
       else if(preview.inventoryChanges?.length){const consumption=/(用了|消耗|做菜|做饭|吃掉|用掉)/.test(text)&&!/(采购|入库|买了|购买)/.test(text);preview.inventoryChanges=preview.inventoryChanges.map(x=>typeof x==='string'?{name:x,amount:'',operation:consumption?'use':'add'}:{...x,amount:amountOf(x),operation:x.operation||x.action||x.type||(consumption?'use':'add')})}
@@ -177,9 +177,9 @@
       data.needsConfirmation=hasActions;
       if(hasActions&&/已处理|已写入|已加入|已记录|已补/.test(data.reply||''))data.reply='这是我准备写入的内容。请先核对下方预览，确认后才会保存。';
       if(!hasActions&&prepared.alreadyRecorded)data.reply=`${prepared.date} 的「${prepared.name}」已在 Done 和计时记录中，这次没有重复写入。`;
-      else if(!hasActions&&/(写入|记入|补记|加入|补写)/.test(text))data.reply='这次还没有形成可写入的记录，也没有改动日程。请写明日期、完成的事项和用时，我会先给你核对预览。';
+      else if(!hasActions&&/^(帮我|请|麻烦)?(写入|记入|补记|补写)/.test(text.trim()))data.reply='这次还没有形成可写入的记录，也没有改动日程。请写明日期、完成的事项和用时，我会先给你核对预览。';
       data.preview=preview;pending=data;waiting.innerHTML=previewHtml(data);conversation.push({role:'assistant',content:data.reply||'我已经整理好。'});saveConversation();const confirm=waiting.querySelector('#lumiConfirm');if(confirm)confirm.onclick=apply;
-    }catch(e){const message=`暂时无法整理：${e.message||'请确认网络和 DeepSeek 余额后重试'}`;waiting.textContent=message;conversation.push({role:'assistant',content:message});saveConversation()}
+    }catch(e){const raw=e.message||'请确认网络后重试';const message=`暂时无法整理：${raw.length>80?raw.slice(0,80)+'…':raw}`;waiting.textContent=message;conversation.push({role:'assistant',content:message});saveConversation()}
     finally{asking=false;button.disabled=false;const messages=document.querySelector('#lumiMessages');if(messages)messages.scrollTop=messages.scrollHeight}
   }
 
