@@ -60,7 +60,7 @@
   const normalizeName=s=>String(s||'').replace(/[\s·•+＋，,。:：()（）]/g,'').toLowerCase();
   const resolveTask=(item,forMove=false)=>{const name=typeof item==='string'?item:(item.name||item.task||''),id=typeof item==='object'?item.id:null,date=typeof item==='object'?(forMove?item.fromDate:(item.date||item.fromDate)):null;return tasks.filter(t=>id!=null?String(t.id)===String(id):normalizeName(t.n)===normalizeName(name)&&(!date||t.date===date))};
   const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(String(value||''));
-  const taskProblems=p=>(p.createdTasks||[]).some(item=>!validDate(item.date)||!(item.name||item.task))||(p.completedTasks||[]).some(item=>resolveTask(item).length!==1)||(p.rescheduledTasks||[]).some(item=>resolveTask(item,true).length!==1||!validDate(item.toDate||item.newDate||item.date))||(p.deletedTasks||[]).some(item=>resolveTask(item).length!==1);
+  const taskProblems=p=>(p.createdTasks||[]).some(item=>!validDate(item.date)||!(item.name||item.task))||(p.completedTasks||[]).some(item=>resolveTask(item).length!==1)||(p.rescheduledTasks||[]).some(item=>resolveTask(item,true).length!==1||!validDate(item.toDate||item.newDate||item.date))||(p.deletedTasks||[]).some(item=>resolveTask(item).length!==1)||(p.updatedTasks||[]).some(item=>resolveTask(item).length!==1);
   const referredDate=text=>{
     const explicit=text.match(/(20\d{2})[年/-](\d{1,2})[月/-](\d{1,2})日?/);
     if(explicit)return `${explicit[1]}-${String(explicit[2]).padStart(2,'0')}-${String(explicit[3]).padStart(2,'0')}`;
@@ -104,7 +104,7 @@
     }
     const keep=[];for(const item of preview.completedTasks||[]){const matches=resolveTask(item);if(matches.length===1&&matches[0].done)continue;if(matches.length){keep.push(item);continue}const itemName=typeof item==='string'?item:item.name||item.task;const itemDate=typeof item==='string'?date:item.date||date;if(completed&&validDate(itemDate)&&itemName&&!preview.createdTasks.some(t=>t.date===itemDate&&normalizeName(t.name||t.task)===normalizeName(itemName)))preview.createdTasks.push({name:itemName,date:itemDate,completed:true})}
     preview.completedTasks=keep;
-    const hasChanges=['createdTasks','completedTasks','rescheduledTasks','deletedTasks','timeEntries','inventoryChanges','mealPlan'].some(key=>preview[key]?.length);
+    const hasChanges=['createdTasks','completedTasks','rescheduledTasks','deletedTasks','updatedTasks','timeEntries','inventoryChanges','mealPlan'].some(key=>preview[key]?.length);
     const matchingTask=tasks.find(t=>t.date===date&&normalizeName(t.n)===normalizeName(name));
     const seconds=mentionedSeconds(source),matchingLog=(window.magicianTimeLogs||[]).some(x=>x.date===date&&Number(x.seconds)===seconds&&normalizeName(x.activity)===normalizeName(name));
     return {alreadyRecorded:!hasChanges&&!!matchingTask?.done&&(!seconds||matchingLog),name,date};
@@ -117,7 +117,7 @@
     inventory:window.magicianInventory||[],recipes:window.magicianRecipes||[],
     weeklyMeals:window.magicianMealPlan||[],
     finance:(window.magicianFinance||[]).slice(-40),
-    instructions:'你是 Lumi，阿雪的私人助理。判断用户想记录、修改、查询还是规划，给出可执行的 preview。规则：1）context 才是已保存状态，历史聊天里的”已处理”不算，避免重复。2）回复不超过两句，用户没要求时不分析负荷。3）确认前不要声称已写入。preview 字段说明：createdTasks=[{name,date,completed,minor}]，minor:true 只是让卡片紧凑显示，类目由系统自动分类，你不需要管类目。顺手能做完、不占整块时间的事自动加 minor:true，如检查/续费/回复消息/下单/预约/转账等。回复中不要提类目归属；completedTasks=[{name,date}]；rescheduledTasks=[{name,fromDate,toDate}]；deletedTasks=[{name,date}] 用于删除任务；timeEntries=[{activity,date,seconds,qty}] qty 表示完成件数（如写了4篇脚本 qty:4），默认1；inventoryChanges=[{name,amount,operation}]；mealPlan=[{date,name,type}] type 为 “lunch” 或 “dinner”，这是饮食存档不是建议。',
+    instructions:'你是 Lumi，阿雪的私人助理。判断用户想记录、修改、查询还是规划，给出可执行的 preview。规则：1）context 才是已保存状态，历史聊天里的”已处理”不算，避免重复。2）回复不超过两句，用户没要求时不分析负荷。3）确认前不要声称已写入。preview 字段说明：createdTasks=[{name,date,completed,minor}]，minor:true 只是让卡片紧凑显示，类目由系统自动分类，你不需要管类目。顺手能做完、不占整块时间的事自动加 minor:true，如检查/续费/回复消息/下单/预约/转账等。回复中不要提类目归属；completedTasks=[{name,date}]；rescheduledTasks=[{name,fromDate,toDate}]；deletedTasks=[{name,date}] 用于删除任务；updatedTasks=[{name,date,set:{}}] 用于修改现有任务属性（如 set:{minor:true} 或 set:{name:"新名称"}）；timeEntries=[{activity,date,seconds,qty}] qty 表示完成件数（如写了4篇脚本 qty:4），默认1；inventoryChanges=[{name,amount,operation}]；mealPlan=[{date,name,type}] type 为 “lunch” 或 “dinner”，这是饮食存档不是建议。',
     categoryGuide:{'体态锻炼':['力量训练','有氧','普拉提','欧阳春晓','散步','做饭','备餐','采购食材','补充库存'],'美妆账号':['选题','写脚本（每月 1–20 日）','找素材','拍摄','剪辑视频','封面','发布','数据复盘'],'知识付费':['选题会','课程内容','写脚本（每月 21 日起）','直播','学员服务'],'其他工作项目':['合作项目','商务沟通','文创','代购','表格','出差','见师傅'],'休息 / 娱乐':['看电影','手账','弹钢琴','弹吉他','好友聚会'],scriptRule:'写脚本：每月 1–20 日归美妆账号；21 日起归知识付费。'}
   });
 
@@ -139,6 +139,7 @@
     if(p.completedTasks?.length)bits.push(`<b>将完成 ${p.completedTasks.length} 个任务</b><ul>${list(p.completedTasks)}</ul>`);
     if(p.rescheduledTasks?.length)bits.push(`<b>将调整 ${p.rescheduledTasks.length} 个任务</b><ul>${p.rescheduledTasks.map(x=>`<li>${esc(x.name||x.task||'任务')} → ${esc(x.toDate||x.newDate||x.date||'日期待确认')}</li>`).join('')}</ul>`);
     if(p.deletedTasks?.length)bits.push(`<b>将删除 ${p.deletedTasks.length} 个任务</b><ul>${list(p.deletedTasks)}</ul>`);
+    if(p.updatedTasks?.length)bits.push(`<b>将修改 ${p.updatedTasks.length} 个任务</b><ul>${p.updatedTasks.map(t=>`<li>${esc(t.name||'')} · ${t.date||''} → ${Object.entries(t.set||{}).map(([k,v])=>`${k}:${v}`).join(', ')}</li>`).join('')}</ul>`);
     if(taskProblems(p))bits.push('<p>有任务名称重复、没有匹配的任务，或新日期不明确。请注明任务原日期和目标日期后重新整理。</p>');
     if(p.timeEntries?.length)bits.push(`<b>将补记 ${p.timeEntries.length} 条时间</b><ul>${p.timeEntries.map(x=>`<li>${esc(x.activity||x.name||'未命名事项')} · ${esc(x.date||'今天')} · ${timeSeconds(x)?`${Math.round(timeSeconds(x)/60)} 分钟`:'时长待补充'}${(x.qty||1)>1?` · ${x.qty} 件`:''}</li>`).join('')}</ul>`);
     if(p.inventoryChanges?.length)bits.push(`<b>将更新 ${p.inventoryChanges.length} 项库存</b><ul>${stockList(p.inventoryChanges)}</ul>${stockProblems(p.inventoryChanges).length?'<p>有食材缺少数量、现有库存不足，或单位无法核算；请补充信息后重新整理。</p>':''}`);
@@ -166,7 +167,7 @@
       if(purchases.length){const parsedNames=new Set(purchases.map(x=>x.name));const unmatched=purchases.length>=(preview.inventoryChanges||[]).length?[]:(preview.inventoryChanges||[]).map(x=>typeof x==='string'?{name:x,amount:''}:{...x,amount:amountOf(x)}).filter(x=>!parsedNames.has(x.name));preview.inventoryChanges=[...purchases,...unmatched];data.needsConfirmation=true}
       else if(preview.inventoryChanges?.length){const consumption=/(用了|消耗|做菜|做饭|吃掉|用掉)/.test(text)&&!/(采购|入库|买了|购买)/.test(text);preview.inventoryChanges=preview.inventoryChanges.map(x=>typeof x==='string'?{name:x,amount:'',operation:consumption?'use':'add'}:{...x,amount:amountOf(x),operation:x.operation||x.action||x.type||(consumption?'use':'add')})}
       const prepared=prepareCompletion(preview,text,prior);
-      const hasActions=['createdTasks','completedTasks','rescheduledTasks','deletedTasks','timeEntries','inventoryChanges','mealPlan'].some(key=>preview[key]?.length);
+      const hasActions=['createdTasks','completedTasks','rescheduledTasks','deletedTasks','updatedTasks','timeEntries','inventoryChanges','mealPlan'].some(key=>preview[key]?.length);
       data.needsConfirmation=hasActions;
       if(hasActions&&/已处理|已写入|已加入|已记录|已补/.test(data.reply||''))data.reply='这是我准备写入的内容。请先核对下方预览，确认后才会保存。';
       if(!hasActions&&prepared.alreadyRecorded)data.reply=`${prepared.date} 的「${prepared.name}」已在 Done 和计时记录中，这次没有重复写入。`;
@@ -182,6 +183,7 @@
     (p.completedTasks||[]).forEach(item=>{const [task]=resolveTask(item);if(task)task.done=true});
     (p.rescheduledTasks||[]).forEach(item=>{const [task]=resolveTask(item,true);const date=item.toDate||item.newDate||item.date;if(task&&/^\d{4}-\d{2}-\d{2}$/.test(date))task.date=date});
     (p.deletedTasks||[]).forEach(item=>{const matches=resolveTask(item);matches.forEach(task=>{const idx=tasks.indexOf(task);if(idx>=0){(window.magicianTrash=window.magicianTrash||[]).push(task);tasks.splice(idx,1)}})});
+    (p.updatedTasks||[]).forEach(item=>{const [task]=resolveTask(item);if(task&&item.set){if('minor' in item.set)task.minor=!!item.set.minor;if('name' in item.set&&item.set.name)task.n=String(item.set.name).trim();if('date' in item.set&&validDate(item.set.date))task.date=item.set.date}});
     (p.timeEntries||[]).forEach((entry,i)=>{const seconds=timeSeconds(entry),date=entry.date||localToday(),activity=entry.activity||entry.name||'Lumi 补记',qty=Number(entry.qty)||1;if(seconds>0&&!(window.magicianTimeLogs||[]).some(x=>x.date===date&&Number(x.seconds)===seconds&&normalizeName(x.activity)===normalizeName(activity)))(window.magicianTimeLogs=window.magicianTimeLogs||[]).unshift({id:Date.now()+i,date,activity,seconds,qty,manual:true})});
     if(p.inventoryChanges?.length){
       const inventory=window.magicianInventory=window.magicianInventory||[];
