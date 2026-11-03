@@ -11,12 +11,12 @@
   let chosenMonth=iso(calendarDate).slice(0,7),chosenCategory='有效时间';
   const heatColors=[
     {min:0,bg:'#f0ede6',fg:'#a8a498'},
-    {min:0.01,bg:'#dce8d4',fg:'#5e7a52'},
-    {min:1800,bg:'#b8d4a8',fg:'#3d6635'},
-    {min:3600,bg:'#8ec48b',fg:'#fff'},
-    {min:7200,bg:'#5a9e56',fg:'#fff'},
-    {min:10800,bg:'#3a7d3a',fg:'#fff'},
-    {min:14400,bg:'#1e5c2a',fg:'#fff'}
+    {min:0.01,bg:'#e8eed8',fg:'#6d8a5e'},
+    {min:18000,bg:'#dce8d4',fg:'#5e7a52'},
+    {min:25200,bg:'#b8d4a8',fg:'#3d6635'},
+    {min:28800,bg:'#8ec48b',fg:'#fff'},
+    {min:32400,bg:'#5a9e56',fg:'#fff'},
+    {min:36000,bg:'#3a7d3a',fg:'#fff'}
   ];
   const heatStyle=secs=>{
     let chosen=heatColors[0];
@@ -64,7 +64,7 @@
     const weekStart=startOfWeek(calendarDate),weekKey=iso(weekStart),weekEnd=new Date(weekStart);weekEnd.setDate(weekEnd.getDate()+6);
     const weekLogs=logs().filter(x=>x.date>=weekKey&&x.date<=iso(weekEnd));
     const done=tasks.filter(t=>t.done&&t.date>=weekKey&&t.date<=iso(weekEnd)).length;
-    const legendLabels=['','30m','1h','2h','3h','4h+'];
+    const legendLabels=['','5h','7h','8h','9h','10h+'];
     const legendHtml=`<div style="display:flex;gap:2px;align-items:flex-end;margin-top:10px;font-size:10px;color:var(--muted)"><span style="margin-right:2px">少</span>${heatColors.slice(1).map((c,i)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-size:9px;color:var(--muted)">${legendLabels[i]}</span><span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:${c.bg}"></span></div>`).join('')}<span style="margin-left:2px">多</span></div>`;
     modulePanel.innerHTML=`<div class="module-head"><div><h2>每周复盘</h2><p>用真实记录看见自己的节奏。</p></div><button class="back-home" id="reviewBack">← 主线一览</button></div><div class="module-grid" style="grid-template-columns:1fr 360px"><div class="module-card"><h3>时间热力图</h3><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0"><input id="reviewMonth" type="month" value="${chosenMonth}" style="padding:8px;border:1px solid var(--line);border-radius:7px"><select id="reviewCategory" style="padding:8px;border:1px solid var(--line);border-radius:7px">${categories.map(c=>`<option ${c===chosenCategory?'selected':''}>${esc(c)}</option>`).join('')}</select><span style="margin-left:auto;font-size:13px;color:#314b36;font-weight:600">本月 ${hours(total)}</span></div><div style="display:flex;gap:24px;align-items:flex-start"><div style="flex:1;min-width:0"><div id="heatGrid" style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;max-width:560px"><div style="grid-column:1/-1;display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;color:#8b8b82"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>${cells.join('')}</div>${legendHtml}</div><div id="dayDetailWrap" style="flex:0 0 240px;border-left:1px solid var(--line);padding-left:20px">${dayDetailInner(iso(new Date()),all)}</div></div></div>${projectEstimates()}<div class="module-card"><h3>${weekKey} — ${iso(weekEnd)}</h3><p>完成任务 <b>${done}</b> 件 · 记录时间 <b>${hours(weekLogs.reduce((n,x)=>n+Number(x.seconds||0),0))}</b></p><p style="font-size:12px;color:var(--muted)">各类时长依据现有计时事项自动归类。</p></div><div class="module-card"><h3>写下这周的复盘</h3><form id="reviewForm"><textarea name="note" rows="7" placeholder="这周完成了什么？有什么值得保留或调整？" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;resize:vertical;font:inherit">${esc(window.magicianWeeklyReviews[weekKey]||'')}</textarea><button class="add" style="margin-top:9px">保存复盘</button></form></div></div>`;
     modulePanel.querySelector('#reviewBack').onclick=()=>openModule('home');
