@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Magician — 生活与工作</title>
+  <meta name="description" content="一个安静、清晰的个人生活与工作系统" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
+    :root{--ink:#22231f;--muted:#777970;--paper:#f7f6f1;--card:#fffefa;--line:#e7e5dd;--sage:#dbe8d5;--orange:#f8dfc6;--violet:#e8e1f7;--blue:#dbeaf0;--yellow:#f5ecc7;--pink:#f3dce2;--shadow:0 15px 40px rgba(46,47,35,.07)}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans SC',sans-serif;font-size:14px}button,input{font:inherit}button{cursor:pointer;border:0;background:transparent;color:inherit}.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}.side{padding:32px 20px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:32px;background:#fbfaf6}.brand{font-family:'Playfair Display',serif;font-size:31px;letter-spacing:-1.5px}.brand small{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--muted);margin-left:7px}.nav{display:grid;gap:4px}.nav button{display:flex;align-items:center;gap:12px;text-align:left;padding:11px 12px;border-radius:9px;color:#676860}.nav button.active,.nav button:hover{background:#eceee7;color:var(--ink)}.nav b{font-weight:500}.dot{width:8px;height:8px;border-radius:100%;background:#aeb9a6}.side-bottom{margin-top:auto;border-top:1px solid var(--line);padding:18px 8px 0;color:var(--muted);font-size:12px;line-height:1.7}.main{padding:29px 38px 40px;max-width:1600px;width:100%;margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}.date{font-family:'DM Mono';font-size:11px;letter-spacing:.3px;color:var(--muted)}.actions{display:flex;gap:10px;align-items:center}.icon-btn{width:35px;height:35px;border:1px solid var(--line);border-radius:50%;font-size:17px}.icon-btn:hover{background:#fff}.add{background:#252621;color:#fff;border-radius:8px;padding:9px 14px;font-size:13px}.add:hover{background:#3e4137}.hero{background:#253229;border-radius:17px;color:#fff;padding:24px 26px;display:flex;align-items:center;justify-content:space-between;margin-bottom:21px;min-height:125px;box-shadow:var(--shadow)}.eyebrow{font-family:'DM Mono';font-size:10px;letter-spacing:1.4px;color:#b5cbb2}.hero h1{font-size:24px;margin:9px 0 0;font-weight:500;letter-spacing:-.5px}.hero h1 em{font-family:'Playfair Display';font-weight:500}.hero-note{font-size:12px;color:#c8d4c5;max-width:260px;line-height:1.7;text-align:right}.metrics{display:grid;grid-template-columns:1.45fr repeat(3,1fr);gap:13px;margin-bottom:20px}.metric{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 17px;min-height:103px}.metric-label{font-size:11px;color:var(--muted)}.metric-value{margin-top:10px;font-size:23px;letter-spacing:-.7px;font-weight:600}.metric-sub{font-size:11px;color:#8a8e85;margin-top:4px}.load{display:flex;align-items:center;justify-content:space-between}.load-status{font-family:'Playfair Display';font-style:italic;font-size:20px;color:#49604a}.mini-bars{display:flex;gap:4px;align-items:flex-end;height:34px}.mini-bars i{display:block;width:7px;border-radius:5px;background:#c8d9c4}.mini-bars i:nth-child(1){height:15px}.mini-bars i:nth-child(2){height:25px}.mini-bars i:nth-child(3){height:19px}.mini-bars i:nth-child(4){height:32px}.mini-bars i:nth-child(5){height:22px}.content{display:grid;grid-template-columns:minmax(650px,1fr) 290px;gap:20px}.calendar{background:var(--card);border:1px solid var(--line);border-radius:15px;overflow:hidden;box-shadow:0 8px 25px rgba(45,45,35,.025)}.cal-head{padding:19px 20px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.cal-head h2{font-size:15px;margin:0;font-weight:600}.view-tabs{display:flex;background:#f1f0eb;padding:3px;border-radius:7px}.view-tabs button{padding:5px 9px;font-size:11px;color:var(--muted);border-radius:5px}.view-tabs button.active{background:white;color:var(--ink);box-shadow:0 1px 4px #ddd}.week{display:grid;grid-template-columns:repeat(7,1fr);min-height:450px}.day{padding:14px 9px;border-right:1px solid var(--line);min-width:0;transition:.2s}.day:last-child{border:0}.day.dragover{background:#f3f5ef}.day.today{background:#fbfcf8}.day-title{font-size:11px;color:var(--muted);padding:0 4px 14px}.day-title strong{display:inline-grid;place-items:center;width:23px;height:23px;margin-left:3px;border-radius:50%;color:var(--ink);font-size:12px}.today .day-title strong{background:#2e3b30;color:white}.task{padding:8px 8px 8px 9px;border-radius:7px;margin:0 0 7px;cursor:grab;position:relative;line-height:1.42;transition:.15s}.task:hover{transform:translateY(-1px);box-shadow:0 4px 10px #0000000b}.task.compact{font-size:9px;padding:4px 5px;margin:3px 0}.task.done{opacity:.48;text-decoration:line-through}.task .cat{display:block;font-size:9px;opacity:.63;margin-bottom:2px}.task .check{float:right;width:14px;height:14px;border:1px solid rgba(50,50,40,.38);border-radius:50%;margin-left:4px}.task.done .check{background:#485c47;border-color:#485c47}.task.done .check:after{content:'✓';color:white;font-size:9px;display:block;text-align:center;line-height:13px}.health{background:var(--sage)}.eco{background:var(--blue)}.beauty{background:var(--pink)}.course{background:var(--violet)}.work{background:var(--orange)}.rest{background:var(--yellow)}.empty{font-size:10px;color:#aaa89f;padding:8px 4px}.day-view{min-height:450px;padding:22px}.day-hero{display:flex;gap:18px;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--line)}.day-date{font-family:'Playfair Display';font-size:43px;line-height:.8;color:#344934}.day-date small{font-family:'DM Mono';font-size:9px;letter-spacing:1px}.day-hero p{font-size:12px;color:var(--muted);margin:5px 0}.day-list{margin-top:15px}.day-row{display:grid;grid-template-columns:1fr 18px;align-items:center;border-bottom:1px solid var(--line);padding:4px 0}.day-row .task{margin:0}.month-grid{min-height:450px}.month-days{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;background:#f5f4ee;color:var(--muted);font-size:11px;padding:11px}.month-cells{display:grid;grid-template-columns:repeat(7,1fr)}.month-cell{min-height:92px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px;transition:.2s}.month-cell:nth-child(7n){border-right:0}.month-cell.dragover{background:#f3f5ef}.month-cell.today{background:#fbfcf8}.month-date{font-family:'DM Mono';font-size:10px;color:var(--muted)}.muted-cell{background:#faf9f5}.muted-cell .month-date{color:#cbc9c0}.right{display:grid;gap:18px;align-content:start}.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.panel h3{font-size:14px;margin:0}.subtle{font-size:11px;color:var(--muted)}.timer-read{font-family:'DM Mono';font-size:31px;letter-spacing:-1.5px;margin:11px 0 3px}.timer-type{font-size:11px;color:var(--muted);margin-bottom:13px}.timer-btn{width:100%;padding:10px;background:#e1eadc;border-radius:8px;color:#355035;font-size:12px}.timer-btn.running{background:#263c2a;color:#fff}.inbox-input{display:flex;gap:7px}.inbox-input input{width:100%;border:1px solid var(--line);border-radius:7px;padding:9px;background:#fbfaf6;outline:none;font-size:12px}.inbox-input input:focus{border-color:#99aa96}.inbox-list{list-style:none;padding:0;margin:12px 0 0}.inbox-list li{font-size:12px;padding:8px 0;border-bottom:1px solid #efeee9;display:flex;gap:8px}.inbox-list li:before{content:'+';color:#8b9c84}.finance-row{display:flex;justify-content:space-between;margin:10px 0;font-size:12px}.green{color:#50724c}.red{color:#ae7462}.finance-big{font-size:21px;font-weight:600;margin:3px 0 12px}.trend{height:34px;display:flex;align-items:end;gap:4px}.trend i{width:16%;border-radius:3px 3px 0 0;background:#d8e6d1}.trend i:nth-child(1){height:28%}.trend i:nth-child(2){height:47%}.trend i:nth-child(3){height:42%}.trend i:nth-child(4){height:75%}.trend i:nth-child(5){height:65%}.trend i:nth-child(6){height:100%;background:#91ad8e}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,140px);background:#282a25;color:#fff;padding:11px 13px 11px 16px;border-radius:9px;font-size:12px;display:flex;align-items:center;gap:15px;transition:.35s;box-shadow:var(--shadow);z-index:10}.toast.show{transform:translate(-50%,0)}.toast button{color:#d9ead5;text-decoration:underline;font-size:12px}.modal{position:fixed;inset:0;background:#1b211b55;display:grid;place-items:center;z-index:20;padding:20px;opacity:0;pointer-events:none;transition:.25s}.modal.open{opacity:1;pointer-events:auto}.quote{background:#fdfcf8;width:min(470px,100%);border-radius:17px;padding:38px;text-align:center;box-shadow:0 25px 80px #15201655}.quote-mark{font-family:'Playfair Display';font-size:58px;color:#a6bda2;height:44px}.quote p{font-family:'Playfair Display';font-size:26px;line-height:1.45;margin:16px 0 24px}.quote small{font-family:'DM Mono';font-size:10px;color:var(--muted);letter-spacing:1px}.quote button{margin-top:26px;background:#2d3a2e;color:white;padding:9px 22px;border-radius:7px;font-size:12px}@media(max-width:1000px){.content{grid-template-columns:1fr}.right{grid-template-columns:repeat(3,1fr)}.app{grid-template-columns:190px 1fr}.main{padding:25px}}@media(max-width:720px){.app{display:block}.side{display:none}.main{padding:16px}.metrics{grid-template-columns:1fr 1fr}.metrics .metric:first-child{grid-column:span 2}.hero-note{display:none}.week{overflow-x:auto}.day{min-width:105px}.calendar{overflow-x:auto}.right{grid-template-columns:1fr}.topbar{margin-bottom:16px}.month-cell{min-height:74px}}
+  </style>
+<style>
+.quote{width:min(620px,calc(100% - 32px));padding:42px 52px}.quote p{max-width:500px;margin:16px auto 24px;font-size:23px;line-height:1.55;letter-spacing:.01em}
+.sync-pill{font-family:'DM Mono';font-size:10px;color:#6f766d;background:#edf2e9;padding:7px 9px;border-radius:7px}.sync-pill.pending{background:#f7edd8;color:#8c6d3d}.auth-modal{position:fixed;inset:0;z-index:40;background:#f7f6f1ee;display:grid;place-items:center;padding:20px}.auth-card{background:#fffefa;border:1px solid var(--line);width:min(430px,100%);padding:38px;border-radius:16px;box-shadow:var(--shadow);text-align:center}.auth-card .brand{font-size:34px}.auth-card h2{font-family:'Playfair Display';font-size:26px;font-weight:500;margin:25px 0 9px}.auth-card p{font-size:12px;color:var(--muted);line-height:1.7;margin:0 0 22px}.auth-card input{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px;background:#fbfaf6;outline:0}.auth-card input:focus{border-color:#9aac98}.auth-card button{margin-top:10px;width:100%;padding:11px;border-radius:8px;background:#2d3a2e;color:white;font-size:13px}.auth-status{min-height:18px;margin-top:12px;color:#7c7d75;font-size:11px}
+.calendar-nav{display:flex;align-items:center;gap:9px}.calendar-nav h2{white-space:nowrap}.arrow{width:27px;height:27px;border:1px solid var(--line);border-radius:7px;color:var(--muted);font-size:15px}.arrow:hover{background:#f3f5ef;color:var(--ink)}#datePicker{border:0;background:#f4f3ee;border-radius:6px;padding:6px 8px;font-size:11px;color:var(--muted);outline:0;max-width:128px}
+.module-panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:28px;min-height:470px}.module-panel.open{display:block}.module-head{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px}.module-head h2{font-family:'Playfair Display';font-size:29px;font-weight:500;margin:0}.module-head p{color:var(--muted);font-size:12px;margin:4px 0 0}.back-home{padding:8px 11px;border:1px solid var(--line);border-radius:7px;font-size:12px}.module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.module-card{border:1px solid var(--line);border-radius:12px;padding:17px;min-height:120px;background:#fbfaf6}.module-card h3{font-size:14px;margin:0 0 8px}.module-card p{font-size:12px;line-height:1.7;color:var(--muted);margin:0}.module-card .big{font-family:'Playfair Display';font-size:30px;color:#324833;margin:6px 0}.inventory-list{list-style:none;padding:0;margin:0}.inventory-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between}.inventory-list small{color:var(--muted)}
+</style>
+<style>
+.task .check{float:right;width:18px;height:18px;border:1px solid rgba(50,50,40,.45);border-radius:50%;margin:-1px -1px 3px 5px;padding:0;background:#ffffff38;cursor:pointer;position:relative;z-index:3;touch-action:manipulation}.task .check:hover{border-color:#40573f;background:#ffffff9c}.task.done .check{background:#485c47;border-color:#485c47}.task.done .check:after{content:'✓';color:#fff;font-size:11px;display:block;text-align:center;line-height:16px}
+</style>
+<style>
+  :root{--sage:#DDE6DA;--orange:#F1E4D6;--violet:#E4E0EE;--blue:#DCE9E3;--yellow:#DCE5EC;--pink:#EAD9DE}
+  .metrics{gap:10px;margin-bottom:16px}.metric{min-height:82px;padding:12px 15px}.metric-value{margin-top:6px;font-size:20px}.metric-sub{margin-top:2px}.mini-bars{height:25px}
+  .task{font-size:12px;padding:8px 7px;cursor:pointer;overflow-wrap:anywhere;color:#30332f}.task.compact{font-size:10px;line-height:1.35}.task:focus-visible{outline:2px solid #6d8a72;outline-offset:2px}
+  .task .cat{font-size:9px;letter-spacing:.01em;opacity:.8}.task .cat::before{content:'';display:inline-block;width:6px;height:6px;margin-right:4px;border-radius:50%;background:var(--category-accent,#a9b3a5);vertical-align:1px}.health{--category-accent:#B8C8B2}.eco{--category-accent:#B7CEC3}.beauty{--category-accent:#D5B8C1}.course{--category-accent:#C9C0DD}.work{--category-accent:#DDC6AE}.rest{--category-accent:#BACBD8}.day{padding:12px 7px}
+  #taskTrash{background:transparent!important;border-color:#e2e0d7!important;color:#898d84!important;min-height:0!important;padding:10px!important}
+  #taskTrash.drag-target{background:#edf2e9!important;border-color:#9aaa97!important}
+  .task-edit-overlay{position:fixed;inset:0;background:#1d272353;display:grid;place-items:center;z-index:60;padding:16px}
+  .task-edit-card{width:min(430px,100%);background:#fffefa;border:1px solid var(--line);border-radius:17px;padding:26px;box-shadow:0 25px 65px #1d27232b}
+  .task-edit-card h2{font-family:'Playfair Display';font-size:25px;font-weight:500;margin:0 0 18px}
+  .task-edit-card label{display:block;font-size:11px;color:var(--muted);margin:14px 0 6px}
+  .task-edit-card input,.task-edit-card select{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:8px;background:#faf9f5;color:var(--ink);outline:0;font:inherit}
+  .task-edit-card input:focus,.task-edit-card select:focus{border-color:#9caf9b}
+  .task-edit-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}.task-edit-actions button{padding:9px 16px;border:1px solid var(--line);border-radius:8px}.task-edit-actions .save{background:#29382e;color:white;border-color:#29382e}
+  .app{grid-template-columns:188px minmax(0,1fr)}.side{padding:30px 14px}.main{padding:26px 23px 40px}.content{grid-template-columns:minmax(0,1fr) 250px;gap:16px}.right .panel{padding:15px}.calendar{min-width:0}.week{min-width:800px}
+  .week .day{padding:13px 8px}.week .day-title{font-size:12px}.week .task{font-size:13px;line-height:1.55;padding:10px 8px}.week .task .cat{font-size:10px}.week .lunch-row{font-size:11px!important}
+  @media(max-width:1100px){.content{grid-template-columns:minmax(0,1fr)}.right{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media(max-width:720px){.app{display:block}.main{padding:16px}.right{grid-template-columns:1fr}.week{min-width:800px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side"><div><div class="brand">Magician <small>MAKE IT REAL</small></div></div><nav class="nav"><button class="active" data-module="home"><span class="dot"></span><b>主线一览</b></button><button data-module="inbox"><span class="dot"></span>代办任务 <em id="inboxCount">2</em></button><button data-module="food"><span class="dot"></span>菜谱与库存</button><button data-module="review"><span class="dot"></span>每周复盘</button><button data-module="finance"><span class="dot"></span>Finance</button></nav><div class="side-bottom">11 月 · 第 1 周<br>从无到有，日日成型。</div></aside>
+  <main class="main"><header class="topbar"><div class="date">MONDAY, NOV 02 · 2026</div><div class="actions"><span class="sync-pill pending" id="syncPill">待连接</span><button class="icon-btn" id="quoteOpen" title="今日语录">✦</button><button class="add" id="addTask">＋ 新任务</button></div></header>
+    <section class="hero"><div><div class="eyebrow">TODAY'S MAIN THREAD</div><h1>把这个月的 <em>主线</em> 放进来。</h1></div><div class="hero-note">等你导入 11 月日程后，Lumi 会从中推断今天最重要的事。</div></section>
+    <section class="metrics"><article class="metric load"><div><div class="metric-label">本周负荷</div><div class="metric-value load-status">等待记录</div><div class="metric-sub">导入日程后开始估算</div></div><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i></div></article><article class="metric"><div class="metric-label">今日专注</div><div class="metric-value" id="focusMetric">—</div><div class="metric-sub">尚无记录</div></article><article class="metric"><div class="metric-label">本月净现金流</div><div class="metric-value">—</div><div class="metric-sub">尚无记录</div></article><article class="metric"><div class="metric-label">今日完成</div><div class="metric-value">—</div><div class="metric-sub">等待任务</div></article></section>
+    <section class="module-panel" id="modulePanel"></section><section class="content" id="homeContent"><section class="calendar"><div class="cal-head"><div class="calendar-nav"><button class="arrow" id="prevPeriod" aria-label="上一段">←</button><h2 id="viewTitle">11 月 2 日 — 8 日</h2><button class="arrow" id="nextPeriod" aria-label="下一段">→</button><input id="datePicker" type="date" value="2026-11-02" aria-label="选择日期"></div><div class="view-tabs" aria-label="日历视图"><button data-view="week" class="active">周</button><button data-view="day">日</button><button data-view="month">月</button></div></div><div class="week" id="week"></div></section>
+    <aside class="right"><section class="panel"><div class="panel-head"><h3>时间记录</h3><span class="subtle" id="timerState">尚未开始</span></div><select id="timerTask" style="width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;background:#fbfaf6;margin-bottom:9px"><option value="写脚本">写脚本 · 美妆账号</option><option value="拍摄">拍摄 · 美妆账号</option><option value="找素材">找素材 · 美妆账号</option><option value="力量训练">力量训练 · 体态锻炼</option><option value="做饭">做饭 · 体态锻炼</option></select><div class="timer-read" id="timer">00:00:00</div><div class="timer-type" id="timerHint">实际工时会自动记入所选事项</div><button class="timer-btn" id="timerButton">开始计时</button><button class="back-home" id="manualTime" style="width:100%;margin-top:8px">＋ 补记时间</button></section>
+    <section class="panel"><div class="panel-head"><h3>今日食谱</h3><button class="subtle" id="openFood" onclick="openModule('food')">查看菜谱库 →</button></div><div class="finance-row"><span>午餐</span><span>尚未安排</span></div><div class="metric-sub" style="margin-top:12px">导入菜谱库后，Lumi 会帮你安排本周午餐。</div></section>
+    <section class="panel"><div class="panel-head"><h3>临时收件箱</h3><span class="subtle">稍后归类</span></div><div class="inbox-input"><input id="inboxInput" placeholder="记下一件事…" /><button class="add" id="inboxAdd">添加</button></div><ul class="inbox-list" id="inboxList"></ul></section>
+    <section class="panel"><div class="panel-head"><h3>Finance</h3><span class="subtle">11 月</span></div><div class="metric-label">净现金流</div><div class="finance-big">—</div><div class="finance-row"><span>商单收入</span><span class="green">—</span></div><div class="finance-row"><span>投流支出</span><span class="red">—</span></div><div class="trend"><i></i><i></i><i></i><i></i><i></i><i></i></div></section></aside></section>
+  </main></div>
+  <div class="auth-modal" id="authModal"><div class="auth-card"><div class="brand">Magician</div><h2>把你的节奏带到每一台设备。</h2><p>输入邮箱，我们会发一封验证链接。第一次完成验证后，设备会保持登录并自动同步。</p><input id="authEmail" type="email" placeholder="你的邮箱" autocomplete="email" /><button id="authSend">发送验证链接</button><div class="auth-status" id="authStatus"></div></div></div><div class="toast" id="toast"><span id="toastText">已更新</span><button id="undo">撤销</button></div>
+  <div class="modal open" id="modal"><div class="quote"><div class="quote-mark">“</div><p id="quoteText">不要做让自己后悔的事情。</p><small>REMEMBER WHY YOU STARTED</small><br><button id="closeQuote">开始今天</button></div></div>
+  <script>
+    const days=[['一','2'],['二','3'],['三','4'],['四','5'],['五','6'],['六','7'],['日','8']]; let view='week';
+    let tasks=JSON.parse(localStorage.getItem('magician-tasks')||'null')||[]; let undoFn=null;
+    const week=document.querySelector('#week');
+    const escapeTaskText=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    function taskCard(t,compact=false){return `<div draggable="true" class="task ${escapeTaskText(t.c)} ${t.done?'done':''} ${compact?'compact':''}" data-id="${escapeTaskText(t.id)}"><button type="button" class="check" aria-label="${t.done?'标记为未完成':'标记为已完成'}"></button>${compact?'':`<span class="cat">${escapeTaskText(t.cat)}</span>`}${escapeTaskText(t.n)}</div>`}
+    function render(){
+      document.querySelector('#viewTitle').textContent=view==='week'?'11 月 2 日 — 8 日':view==='month'?'2026 年 11 月':'周一 · 11 月 2 日';
+      document.querySelectorAll('.view-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+      if(view==='week'){week.className='week';week.innerHTML=days.map(([name,num],d)=>`<div class="day ${d===0?'today':''}" data-day="${d}"><div class="day-title">周${name}<strong>${num}</strong></div>${tasks.filter(t=>t.d===d).map(t=>taskCard(t)).join('')||'<div class="empty">留一点空白</div>'}</div>`).join('')}
+      if(view==='day'){week.className='day-view';let list=tasks.filter(t=>t.d===0);week.innerHTML=`<div class="day-hero"><div class="day-date">02<br><small>MONDAY</small></div><div><b>今天的计划</b><p>把重要的事，留在清醒的时间做。</p></div></div><div class="day-list">${list.map(t=>`<div class="day-row" data-day="0">${taskCard(t)}<span>⠿</span></div>`).join('')}</div>`}
+      if(view==='month'){week.className='month-grid';let cells=[];for(let i=0;i<35;i++){let n=i-6;let inMonth=n>0&&n<=30;let d=n-2;cells.push(`<div class="month-cell ${n===2?'today':''} ${!inMonth?'muted-cell':''}" data-day="${d>=0&&d<7?d:-1}"><span class="month-date">${inMonth?n:(n<=0?26+n: n-30)}</span>${d>=0&&d<7?tasks.filter(t=>t.d===d).map(t=>taskCard(t,true)).join(''):''}</div>`)}week.innerHTML=`<div class="month-days">一 二 三 四 五 六 日</div><div class="month-cells">${cells.join('')}</div>`}
+      bindTasks()
+    }
+    function bindTasks(){
+      document.querySelectorAll('.task').forEach(el=>{
+        const check=el.querySelector('.check');
+        check?.addEventListener('pointerdown',e=>e.stopPropagation());
+        check?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const t=tasks.find(x=>x.id==el.dataset.id);if(!t)return;t.done=!t.done;localStorage.setItem('magician-tasks',JSON.stringify(tasks));render();pushCloud?.();toast(t.done?'完成啦，做得好。':'已标记为未完成')});
+        el.addEventListener('dragstart',e=>{if(e.target.closest('.check')){e.preventDefault();return}e.dataTransfer.setData('task',el.dataset.id)});
+      });
+      document.querySelectorAll('[data-day]').forEach(day=>{if(+day.dataset.day<0)return;day.addEventListener('dragover',e=>{e.preventDefault();day.classList.add('dragover')});day.addEventListener('dragleave',()=>day.classList.remove('dragover'));day.addEventListener('drop',e=>{e.preventDefault();day.classList.remove('dragover');const t=tasks.find(x=>x.id==e.dataTransfer.getData('task'));if(!t)return;const old=t.d;t.d=+day.dataset.day;render();undoFn=()=>{t.d=old;render()};toast('已更新排期')})});
+    }
+    function toast(msg){document.querySelector('#toastText').textContent=msg;document.querySelector('#toast').classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>document.querySelector('#toast').classList.remove('show'),4500)}
+    document.querySelector('#undo').onclick=()=>{if(undoFn){undoFn();toast('已撤销');undoFn=null}};
+    function classifyTask(n,date=new Date()){const day=date.getDate(),rules=[['health',['力量训练','有氧','普拉提','欧阳春晓','散步','做饭','备餐','采购食材','补充库存'],'体态锻炼'],['beauty',['选题','找素材','拍摄','剪辑','剪片','剪视频','封面','发布','数据复盘','筛选素材','刷素材','内容素材'],'美妆账号'],['course',['选题会','课程内容','直播','学员服务','知识付费','月末复盘'],'知识付费'],['work',['合作项目','商务沟通','文创','代购','表格','出差','见师傅'],'其他工作项目'],['rest',['看电影','手账','弹钢琴','弹吉他','好友聚会','休息','机动'],'休息 / 娱乐']];if(/脚本/.test(n))return day<=20?{c:'beauty',cat:'美妆账号'}:{c:'course',cat:'知识付费'};const found=rules.find(([,words])=>words.some(w=>n.includes(w)));return found?{c:found[0],cat:found[2]}:{c:'work',cat:'其他工作项目'}}
+    document.querySelector('#addTask').onclick=()=>{let n=prompt('今天要做什么？');if(n){const type=classifyTask(n,calendarDate);tasks.push({id:Date.now(),date:fmt(calendarDate),n,...type,done:false});render();pushCloud?.();toast(`已加入今天的计划 · ${type.cat}`)}};
+    document.querySelector('#inboxAdd').onclick=addInbox;document.querySelector('#inboxInput').addEventListener('keydown',e=>{if(e.key==='Enter')addInbox()});function addInbox(){let input=document.querySelector('#inboxInput');if(input.value.trim()){let li=document.createElement('li');li.textContent=input.value;document.querySelector('#inboxList').prepend(li);input.value='';document.querySelector('#inboxCount').textContent=document.querySelectorAll('#inboxList li').length;toast('已收进临时收件箱')}}
+    let seconds=0,interval=null;const timer=document.querySelector('#timer'),timerBtn=document.querySelector('#timerButton');timerBtn.onclick=()=>{if(interval){clearInterval(interval);interval=null;timerBtn.textContent='继续专注';timerBtn.classList.remove('running');document.querySelector('#timerState').textContent='已暂停';toast('已记录这一段专注时间')}else{interval=setInterval(()=>{seconds++;let h=String(Math.floor(seconds/3600)).padStart(2,'0'),m=String(Math.floor(seconds%3600/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');timer.textContent=`${h}:${m}:${s}`},1000);timerBtn.textContent='结束专注';timerBtn.classList.add('running');document.querySelector('#timerState').textContent='写脚本 · 进行中'}};
+    const quotes=['不要做让自己后悔的事情。','我会无限托举自己到达任何想去的地方。','我的勇气始终比困难多一点。','命运反复考验，只因看到一颗绝对自信的心。','循此苦旅，以达繁星。','熠熠向前，事事登高。','无论做什么，3年后都是30岁。','想又何必怕，怕又何必想。','不能听命于自己者，就要受命于他人。','风起于青萍之末，浪成于微澜之间。','知不足而奋进，望远山而行。','一旦想到我不会停泊于此，就会立刻感觉周围汹涌的潮水正托举着自己。'];document.querySelector('#quoteText').textContent=quotes[Math.floor(Math.random()*quotes.length)];document.querySelector('#closeQuote').onclick=()=>document.querySelector('#modal').classList.remove('open');document.querySelector('#quoteOpen').onclick=()=>document.querySelector('#modal').classList.add('open');document.querySelectorAll('.view-tabs button').forEach(btn=>btn.onclick=()=>{view=btn.dataset.view;render()});render();
+  </script>
+  <script>
+    const modulePanel=document.querySelector('#modulePanel'),homeContent=document.querySelector('#homeContent');
+    const modules={
+      inbox:{title:'代办任务',sub:'先捕捉，再决定要把它放到哪里。',body:`<div class="module-grid"><div class="module-card"><h3>尚未归类</h3><p>暂时没有内容。</p></div><div class="module-card"><h3>快速处理</h3><p>点进一条想法后，可将它变成任务、采购项或直接归档。</p></div></div>`},
+      food:{title:'菜谱与库存',sub:'根据你真实会吃的东西来安排这一周。',body:`<div class="module-grid"><div class="module-card"><h3>本周午餐</h3><p>尚未安排。等你导入菜谱库后，Lumi 可以帮你组合本周五餐。</p></div><div class="module-card"><h3>家中库存</h3><p>暂时没有库存记录。</p></div></div>`},
+      review:{title:'每周复盘',sub:'看见节奏，不是责备自己。',body:`<div class="module-grid"><div class="module-card"><h3>这一周</h3><div class="big">—</div><p>等待真实任务与计时记录。</p></div><div class="module-card"><h3>复盘提示</h3><p>记录开始后，Lumi 会从完成情况、实际工时和锻炼里整理你的节奏。</p></div></div>`},
+      finance:{title:'Finance',sub:'只记录真正影响现金流的两件事。',body:`<div class="module-grid"><div class="module-card"><h3>本月净现金流</h3><div class="big">—</div><p>尚无收入或投流记录。</p></div><div class="module-card"><h3>投流效率</h3><div class="big">—</div><p>录入后会显示投流占收入比例。</p></div></div>`}
+    };
+    function openModule(key){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.module===key));if(key==='home'){modulePanel.classList.remove('open');homeContent.style.display='grid';return}let m=modules[key];homeContent.style.display='none';modulePanel.innerHTML=`<div class="module-head"><div><h2>${m.title}</h2><p>${m.sub}</p></div><button class="back-home" id="backHome">← 回到我的节奏</button></div>${m.body}`;modulePanel.classList.add('open');document.querySelector('#backHome').onclick=()=>openModule('home')}
+    document.querySelectorAll('.nav button').forEach(btn=>btn.onclick=()=>openModule(btn.dataset.module));
+  </script>
+<script>
+  /* Device-local history: edits survive refreshes in this browser. */
+  let calendarDate=new Date();calendarDate.setHours(12,0,0,0);
+  const picker=document.querySelector('#datePicker');
+  const fmt=d=>d.toISOString().slice(0,10);
+  function refreshPeriod(){
+    picker.value=fmt(calendarDate);
+    const end=new Date(calendarDate);end.setDate(end.getDate()+6);
+    const title=document.querySelector('#viewTitle');
+    if(title&&document.querySelector('.view-tabs .active')?.dataset.view==='week')title.textContent=`${calendarDate.getMonth()+1} 月 ${calendarDate.getDate()} 日 — ${end.getMonth()+1} 月 ${end.getDate()} 日`;
+    document.querySelectorAll('.day-title strong').forEach((n,i)=>{let d=new Date(calendarDate);d.setDate(d.getDate()+i);n.textContent=d.getDate()});
+    localStorage.setItem('magician-calendar-date',fmt(calendarDate));
+  }
+  document.querySelector('#prevPeriod').onclick=()=>{calendarDate.setDate(calendarDate.getDate()-7);refreshPeriod()};
+  document.querySelector('#nextPeriod').onclick=()=>{calendarDate.setDate(calendarDate.getDate()+7);refreshPeriod()};
+  picker.onchange=e=>{calendarDate=new Date(e.target.value+'T12:00:00');refreshPeriod()};
+  const savedDate=localStorage.getItem('magician-calendar-date');if(savedDate){calendarDate=new Date(savedDate+'T12:00:00');refreshPeriod()}
+  setInterval(()=>{try{localStorage.setItem('magician-tasks',JSON.stringify(tasks))}catch(e){}},700);
+</script>
+<script>
+  const expandedQuotes=['不要做让自己后悔的事情。','我会无限托举自己到达任何想去的地方。','我的勇气始终比困难多一点。','命运反复考验，只因看到一颗绝对自信的心。','循此苦旅，以达繁星。','熠熠向前，事事登高。','无论做什么，3年后都是30岁。','想又何必怕，怕又何必想。','不能听命于自己者，就要受命于他人。','风起于青萍之末，浪成于微澜之间。','知不足而奋进，望远山而行。','一旦想到我不会停泊于此，就会立刻感觉周围汹涌的潮水正托举着自己。','所有不尊重你的人都在赌你没有前途。'];
+  const showQuote=()=>document.querySelector('#quoteText').textContent=expandedQuotes[Math.floor(Math.random()*expandedQuotes.length)];
+  showQuote();document.querySelector('#quoteOpen').onclick=()=>{showQuote();document.querySelector('#modal').classList.add('open')};
+</script>
+<script>
+  const CLOUD_URL='https://zalxhibbpnrkywfvhgaz.supabase.co';
+  const CLOUD_KEY='sb_publishable_e406b52E2arpMBLpKqKAyA_CVwiKMl-';
+  const authModal=document.querySelector('#authModal'),syncPill=document.querySelector('#syncPill'),authEmail=document.querySelector('#authEmail'),authStatus=document.querySelector('#authStatus');
+  let cloudSession=null,cloudUser=null,cloudReady=false,lastCloudSnapshot='',templateResetVersion=Number(localStorage.getItem('magician-template-reset-version')||0);window.magicianNovemberPlanVersion=0;window.magicianDefaultRecurringVersion=Number(localStorage.getItem('magician-default-recurring-version')||0);
+  const cloudHeaders=(token)=>({'apikey':CLOUD_KEY,'Authorization':`Bearer ${token||CLOUD_KEY}`,'Content-Type':'application/json'});
+  const setSync=(label,pending=false,detail='')=>{syncPill.textContent=label;syncPill.classList.toggle('pending',pending);syncPill.title=detail||label};
+  const stableJson=value=>JSON.stringify(value,(_key,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
+  async function cloudRequest(path,options={}){return fetch(CLOUD_URL+path,{...options,headers:{...cloudHeaders(cloudSession?.access_token),...(options.headers||{})}})}
+  function saveSession(s){cloudSession=s;localStorage.setItem('magician-cloud-session',JSON.stringify(s))}
+  async function currentCloudUser(){
+    if(!cloudSession?.access_token)return null;
+    const r=await cloudRequest('/auth/v1/user');if(!r.ok)return null;return r.json();
+  }
+  function normalizeTaskCategories(){tasks.forEach(t=>{if(/剪辑|剪片|剪视频|(?:快递商单|商单).{0,8}拍摄|拍摄.{0,8}(?:快递商单|商单)/.test(t.n||'')){t.c='beauty';t.cat='美妆账号'}if(t.cat==='生态管理'){t.c='work';t.cat='其他工作项目'}})}
+  function splitCombinedOutlineTasks(){
+    if(window.magicianTaskSplitVersion>=1)return;
+    tasks=tasks.flatMap(t=>{
+      if(!/^筛选素材\s*\+\s*脚本大纲4$/.test(t.n||''))return [t];
+      return [{...t,n:'筛选素材'},...Array.from({length:4},(_,i)=>({...t,id:`${t.id}-outline-${i+1}`,n:`脚本大纲 ${i+1}`}))];
+    });
+    window.magicianTaskSplitVersion=1;localStorage.setItem('magician-task-split-version','1');localStorage.setItem('magician-tasks',JSON.stringify(tasks));
+  }
+  function seedDefaultRecurring(){
+    if(window.magicianDefaultRecurringVersion>=1)return;
+    const defaults=[{id:'repeat-default-exercise',n:'锻炼',repeatDays:[1,2,4,5],c:'health',cat:'体态锻炼'},{id:'repeat-default-cooking',n:'做饭',repeatDays:[0,1,2,3,4,5,6],c:'health',cat:'体态锻炼'}];
+    for(const rule of defaults)if(!tasks.some(t=>t.isRecurringTemplate&&t.n===rule.n))tasks.push({...rule,isRecurringTemplate:true});
+    window.magicianDefaultRecurringVersion=1;
+    localStorage.setItem('magician-default-recurring-version','1');
+    localStorage.setItem('magician-tasks',JSON.stringify(tasks));
+  }
+  function localState(){return {version:11,templateResetVersion,novemberScheduleImported:!!window.magicianNovemberScheduleImported,novemberPlanVersion:window.magicianNovemberPlanVersion||0,taskSplitVersion:window.magicianTaskSplitVersion||0,historicalBackfillVersion:window.magicianHistoricalBackfillVersion||0,defaultRecurringVersion:window.magicianDefaultRecurringVersion||0,tasks,trash:window.magicianTrash||[],calendarDate:calendarDate?.toISOString?.()||null,view,inbox:[...document.querySelectorAll('#inboxList li')].map(x=>x.textContent),timeLogs:window.magicianTimeLogs||[],inventory:window.magicianInventory||[],mealPlan:window.magicianMealPlan||[],recipes:window.magicianRecipes||[],finance:window.magicianFinance||[],weeklyCapacityHours:Number(localStorage.getItem('magician-weekly-capacity-hours')||31),weeklyReviews:window.magicianWeeklyReviews||{},lumiConversation:window.magicianLumiConversation||[]}}
+  async function loadCloud(){
+    const r=await cloudRequest(`/rest/v1/magician_state?select=state&user_id=eq.${cloudUser.id}`);if(!r.ok)throw new Error(`读取失败 ${r.status}：${(await r.text()).slice(0,180)}`);
+    const rows=await r.json();window.magicianCloudRowExists=rows.length>0;if(rows[0]?.state){const s=rows[0].state;window.magicianNovemberPlanVersion=Number(s.novemberPlanVersion||0);if(Number(s.templateResetVersion)>=1){templateResetVersion=Number(s.templateResetVersion);localStorage.setItem('magician-template-reset-version',String(templateResetVersion))}if(Array.isArray(s.tasks)){tasks=s.tasks;localStorage.setItem('magician-tasks',JSON.stringify(tasks));render()}if(s.calendarDate){calendarDate=new Date(s.calendarDate);refreshPeriod()}if(Array.isArray(s.inbox)){document.querySelector('#inboxList').innerHTML=s.inbox.map(v=>`<li>${v}</li>`).join('')}if(Array.isArray(s.timeLogs)){window.magicianTimeLogs=s.timeLogs;localStorage.setItem('magician-time-logs',JSON.stringify(s.timeLogs));}if(Array.isArray(s.inventory)){window.magicianInventory=s.inventory;localStorage.setItem('magician-inventory',JSON.stringify(s.inventory));}if(Array.isArray(s.mealPlan)){window.magicianMealPlan=s.mealPlan;localStorage.setItem('magician-meal-plan',JSON.stringify(s.mealPlan));}}
+    if(rows[0]?.state){const s=rows[0].state;if(Array.isArray(s.trash)){window.magicianTrash=s.trash;localStorage.setItem('magician-trash',JSON.stringify(s.trash));window.renderMagicianTrash?.()}if(Array.isArray(s.recipes)){window.magicianRecipes=s.recipes;localStorage.setItem('magician-recipes',JSON.stringify(s.recipes))}if(Array.isArray(s.finance)){window.magicianFinance=s.finance;localStorage.setItem('magician-finance',JSON.stringify(s.finance))}if(Number(s.weeklyCapacityHours)>0)localStorage.setItem('magician-weekly-capacity-hours',String(s.weeklyCapacityHours));window.magicianDefaultRecurringVersion=Number(s.defaultRecurringVersion||0);localStorage.setItem('magician-default-recurring-version',String(window.magicianDefaultRecurringVersion));if(s.weeklyReviews&&typeof s.weeklyReviews==='object'){window.magicianWeeklyReviews=s.weeklyReviews;localStorage.setItem('magician-weekly-reviews',JSON.stringify(s.weeklyReviews))}if(Array.isArray(s.lumiConversation))window.setMagicianLumiConversation?.(s.lumiConversation)}
+    window.magicianTaskSplitVersion=Number(rows[0]?.state?.taskSplitVersion||0);window.magicianHistoricalBackfillVersion=Number(rows[0]?.state?.historicalBackfillVersion||0);normalizeTaskCategories();splitCombinedOutlineTasks();seedDefaultRecurring();render();window.refreshMagicianMeals?.();window.refreshMagicianSummary?.();cloudReady=true;window.materializeRecurringTasks?.();lastCloudSnapshot=rows[0]?.state&&stableJson(rows[0].state)===stableJson(localState())?JSON.stringify(localState()):'';if(lastCloudSnapshot)setSync('已同步');else await pushCloud();
+  }
+  let syncBusy=false,lastSyncError='';
+  async function pushCloud(){
+    if(!cloudReady||!cloudUser||syncBusy)return;
+    const state=localState(),snapshot=JSON.stringify(state);if(snapshot===lastCloudSnapshot)return;
+    if(!navigator.onLine){setSync('离线·待同步',true,'本机已保存；联网后自动重试');return}
+    syncBusy=true;setSync('同步中…');
+    try{
+      let exists=!!window.magicianCloudRowExists;
+      let r=await cloudRequest(exists?`/rest/v1/magician_state?user_id=eq.${cloudUser.id}&select=user_id`:'/rest/v1/magician_state?select=user_id',{method:exists?'PATCH':'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(exists?{state}:{user_id:cloudUser.id,state})});
+      if(r.status===401&&await refreshCloudSession())r=await cloudRequest(exists?`/rest/v1/magician_state?user_id=eq.${cloudUser.id}&select=user_id`:'/rest/v1/magician_state?select=user_id',{method:exists?'PATCH':'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(exists?{state}:{user_id:cloudUser.id,state})});
+      if(r.status===409&&!exists){exists=true;r=await cloudRequest(`/rest/v1/magician_state?user_id=eq.${cloudUser.id}&select=user_id`,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({state})})}
+      if(!r.ok)throw new Error(`写入失败 ${r.status}：${(await r.text()).slice(0,180)}`);
+      const written=await r.json();if(!Array.isArray(written)||written.length!==1)throw new Error('写入未影响任何记录');
+      window.magicianCloudRowExists=true;
+      const verify=await cloudRequest(`/rest/v1/magician_state?select=state&user_id=eq.${cloudUser.id}`);
+      if(!verify.ok)throw new Error(`回读失败 ${verify.status}`);
+      const rows=await verify.json();if(stableJson(rows[0]?.state)!==stableJson(state))throw new Error('云端内容与本机不一致');
+      lastCloudSnapshot=snapshot;lastSyncError='';setSync('已同步');
+    }catch(e){lastSyncError=e.message||'网络错误';setSync('待同步 · 查看原因',true,lastSyncError);console.warn('Lumi sync failed',e)}finally{syncBusy=false}
+  }
+  async function refreshCloudSession(){
+    if(!cloudSession?.refresh_token)return null;
+    const r=await fetch(`${CLOUD_URL}/auth/v1/token?grant_type=refresh_token`,{method:'POST',headers:{apikey:CLOUD_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:cloudSession.refresh_token})});
+    if(!r.ok)return null;const s=await r.json();saveSession(s);return s;
+  }
+  async function startCloud(){
+    const h=new URLSearchParams(location.hash.slice(1)),q=new URLSearchParams(location.search);
+    const token=h.get('access_token')||q.get('access_token'),refresh=h.get('refresh_token')||q.get('refresh_token');
+    if(token){saveSession({access_token:token,refresh_token:refresh||cloudSession?.refresh_token||null});history.replaceState(null,'',location.pathname)}
+    try{
+      cloudSession=cloudSession||JSON.parse(localStorage.getItem('magician-cloud-session')||'null');
+      cloudUser=await currentCloudUser();
+      if(!cloudUser&&await refreshCloudSession())cloudUser=await currentCloudUser();
+      if(!cloudUser){setSync('等待登录',true);authStatus.textContent=q.get('error_description')||'验证尚未完成，请重新打开最新一封验证邮件。';return}
+      // 登录一旦成功就不再把人关在登录框里；云端暂时连不上也允许继续使用本机数据。
+      authModal.style.display='none';setSync('登录成功，正在同步…');
+      try{await loadCloud()}catch(e){cloudReady=false;lastSyncError=e.message||'读取失败';setSync('待同步 · 查看原因',true,lastSyncError);console.warn('Lumi cloud load failed',e)}
+    }catch(e){setSync('待同步',true);authStatus.textContent='登录状态暂时无法确认，请检查网络后重试。'}
+  }
+  const authSend=document.querySelector('#authSend');let sendingAuth=false;
+  authSend.onclick=async()=>{
+    const email=authEmail.value.trim();if(!email){authStatus.textContent='先输入邮箱。';return}
+    if(sendingAuth)return;
+    const last=Number(localStorage.getItem('magician-auth-last-send')||0),seconds=Math.ceil((60000-(Date.now()-last))/1000);
+    if(seconds>0){authStatus.textContent=`验证链接刚发送过，请先检查邮箱；${seconds} 秒后才能再次发送。`;return}
+    sendingAuth=true;authSend.disabled=true;authStatus.textContent='正在发送…';
+    try{
+      const r=await cloudRequest('/auth/v1/otp',{method:'POST',body:JSON.stringify({email,create_user:true,options:{emailRedirectTo:location.origin}})});
+      if(!r.ok){let detail={};try{detail=await r.json()}catch{};if(r.status===429){const projectLimit=detail.code==='over_email_send_rate_limit'||/email rate limit/i.test(detail.message||'');authStatus.textContent=projectLimit?'发送验证邮件的额度已用完。Supabase 默认每小时只允许 2 封，请过一段时间再试；刷新页面不会重置额度。':'请求太频繁了，请至少等待 1 分钟再试；如果今天已多次发送，也可能需要等待约 1 小时。';return}throw new Error(`${r.status} ${detail.message||detail.error_description||'请稍后重试'}`)}
+      localStorage.setItem('magician-auth-last-send',String(Date.now()));
+      authStatus.textContent='验证链接已发送。请打开最新的一封邮件，并在手机浏览器中完成验证。';
+    }catch(e){authStatus.textContent=`无法发送：${e.message||'请确认网络后重试'}`}
+    finally{sendingAuth=false;authSend.disabled=false}
+  };
+  syncPill.style.cursor='pointer';syncPill.onclick=()=>{if(lastSyncError)alert(`Lumi 同步遇到的问题：\n${lastSyncError}\n\n本机记录仍保留。`);else if(cloudReady)pushCloud()};
+  let reconnecting=false;async function syncTick(){if(!cloudReady&&cloudUser&&!reconnecting){reconnecting=true;try{await loadCloud()}catch(e){lastSyncError=e.message||'读取失败';setSync('待同步 · 查看原因',true,lastSyncError)}finally{reconnecting=false}}else pushCloud()}
+  addEventListener('online',syncTick);addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncTick()});setInterval(syncTick,8000);startCloud();
+</script>
+<script>
+window.magicianTimeLogs=JSON.parse(localStorage.getItem('magician-time-logs')||'[]');window.magicianInventory=JSON.parse(localStorage.getItem('magician-inventory')||'[]');window.magicianMealPlan=JSON.parse(localStorage.getItem('magician-meal-plan')||'[]');let activeEntry=null,activeTicker=null;try{activeEntry=JSON.parse(localStorage.getItem('magician-active-timer')||'null')}catch{}
+let timerSelect=document.querySelector('#timerTask');const manualTime=document.querySelector('#manualTime');
+const showDuration=secs=>{const h=String(Math.floor(secs/3600)).padStart(2,'0'),m=String(Math.floor(secs%3600/60)).padStart(2,'0'),s=String(secs%60).padStart(2,'0');return `${h}:${m}:${s}`};
+const saveTimeLogs=()=>{localStorage.setItem('magician-time-logs',JSON.stringify(window.magicianTimeLogs));pushCloud?.()};
+function localToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function refreshTimeHint(){const today=localToday(),total=window.magicianTimeLogs.filter(x=>x.date===today).reduce((n,x)=>n+x.seconds,0);document.querySelector('#timerHint').textContent=total?`今天已记录 ${Math.floor(total/3600)}h ${Math.floor(total%3600/60)}m · 实际工时`:'实际工时会自动记入所选事项';window.refreshMagicianSummary?.()}
+function showRunningTimer(){if(!activeEntry)return;timer.textContent=showDuration(Math.max(0,Math.floor((Date.now()-new Date(activeEntry.startedAt))/1000)));timerBtn.textContent='结束并记录';timerBtn.classList.add('running');document.querySelector('#timerState').textContent=`${activeEntry.activity} · 进行中`;timerSelect.value=activeEntry.activity}
+if(activeEntry?.startedAt){showRunningTimer();activeTicker=setInterval(showRunningTimer,1000)}
+timerBtn.onclick=()=>{if(!activeEntry){activeEntry={id:Date.now(),date:localToday(),activity:timerSelect.value,startedAt:new Date().toISOString()};localStorage.setItem('magician-active-timer',JSON.stringify(activeEntry));showRunningTimer();activeTicker=setInterval(showRunningTimer,1000);return}const seconds=Math.max(1,Math.floor((Date.now()-new Date(activeEntry.startedAt))/1000));window.magicianTimeLogs.unshift({...activeEntry,endedAt:new Date().toISOString(),seconds});localStorage.removeItem('magician-active-timer');saveTimeLogs();clearInterval(activeTicker);activeEntry=null;timer.textContent='00:00:00';timerBtn.textContent='开始计时';timerBtn.classList.remove('running');document.querySelector('#timerState').textContent='已记录';refreshTimeHint();toast('已记入实际时间')};
+manualTime.onclick=()=>{const date=prompt('补记哪一天？格式：YYYY-MM-DD',localToday());if(!date)return;const activity=prompt('做了什么？','力量训练');if(!activity)return;const start=prompt('开始时间？格式：07:30','07:30');if(!start)return;const end=prompt('结束时间？格式：08:15','08:15');if(!end)return;const [sh,sm]=start.split(':').map(Number),[eh,em]=end.split(':').map(Number),seconds=(eh*60+em-sh*60-sm)*60;if(!Number.isFinite(seconds)||seconds<=0){toast('结束时间需要晚于开始时间');return}window.magicianTimeLogs.unshift({id:Date.now(),date,activity,startedAt:`${date}T${start}:00`,endedAt:`${date}T${end}:00`,seconds,manual:true});saveTimeLogs();refreshTimeHint();toast(`已补记 ${activity} · ${Math.floor(seconds/60)} 分钟`)};refreshTimeHint();
+</script>
+<script src="calendar-v2.js?v=20261102-7"></script>
+<script src="digest.js?v=20261102-13"></script>
+<script src="entry-pages.js?v=20261102-4"></script>
+<script src="review.js?v=20261102-2"></script>
+<script src="trash.js?v=20261102-3"></script>
+<script src="task-edit.js?v=20261102-1"></script>
+<script src="home-summary.js?v=20261103-1"></script>
+<script src="improvements.js?v=20261103-3"></script>
+<script src="workload.js?v=20261103-1"></script>
+</body></html>
