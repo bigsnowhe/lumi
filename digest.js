@@ -58,6 +58,8 @@
   const stockProblems=changes=>changes.filter(x=>{if(!x.name||!x.amount)return true;if(stockOperation(x)!=='use')return false;const before=(window.magicianInventory||[]).filter(y=>String(y.name||'').trim()===String(x.name).trim()).reduce((sum,y)=>mergeAmount(sum,y.amount),'');return subtractAmount(before,x.amount)===null});
   const timeSeconds=x=>{const direct=Number(x.seconds||x.durationSeconds||0);if(direct>0)return direct;const raw=String(x.duration||x.time||'');const h=raw.match(/(\d+(?:\.\d+)?)\s*(?:小时|h)/i),m=raw.match(/(\d+(?:\.\d+)?)\s*(?:分钟|分|m)/i);return Math.round((Number(h?.[1]||0)*60+Number(m?.[1]||0))*60)};
   const normalizeName=s=>String(s||'').replace(/[\s·•+＋，,。:：()（）]/g,'').toLowerCase();
+  const matchingTimeEntries=item=>{const logs=window.magicianTimeLogs||[];if(item.id!=null)return logs.filter(log=>String(log.id)===String(item.id));const date=item.date||localToday(),name=normalizeName(item.activity||item.name);return name?logs.filter(log=>log.date===date&&normalizeName(log.activity)===name):[]};
+  const invalidTimeUpdates=preview=>(preview.updatedTimeEntries||[]).filter(item=>{const set=item.set||{},seconds=Number(set.seconds);return matchingTimeEntries(item).length!==1||('seconds' in set&&(!Number.isFinite(seconds)||seconds<=0))||(!('seconds' in set)&&!String(set.activity||'').trim())});
   const resolveTask=(item,forMove=false)=>{const name=typeof item==='string'?item:(item.name||item.task||''),id=typeof item==='object'?item.id:null,date=typeof item==='object'?(forMove?item.fromDate:(item.date||item.fromDate)):null;const nn=normalizeName(name);let results=tasks.filter(t=>id!=null?String(t.id)===String(id):nn===normalizeName(t.n)&&(!date||t.date===date));if(!results.length&&name&&!id)results=tasks.filter(t=>(!date||t.date===date)&&(normalizeName(t.n).includes(nn)||nn.includes(normalizeName(t.n))));return results};
   const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(String(value||''));
   const taskProblems=p=>(p.createdTasks||[]).some(item=>!validDate(item.date)||!(item.name||item.task))||(p.completedTasks||[]).some(item=>resolveTask(item).length!==1)||(p.rescheduledTasks||[]).some(item=>resolveTask(item,true).length!==1||!validDate(item.toDate||item.newDate||item.date))||(p.deletedTasks||[]).some(item=>resolveTask(item).length!==1)||(p.updatedTasks||[]).some(item=>resolveTask(item).length!==1);
@@ -147,6 +149,7 @@
     if(p.deletedTasks?.length)bits.push(`<b>将删除 ${p.deletedTasks.length} 个任务</b><ul>${list(p.deletedTasks)}</ul>`);
     if(p.updatedTasks?.length)bits.push(`<b>将修改 ${p.updatedTasks.length} 个任务</b><ul>${p.updatedTasks.map(t=>`<li>${esc(t.name||'')} · ${t.date||''} → ${Object.entries(t.set||{}).map(([k,v])=>`${k}:${v}`).join(', ')}</li>`).join('')}</ul>`);
     if(p.updatedTimeEntries?.length)bits.push(`<b>将修改 ${p.updatedTimeEntries.length} 条时间记录</b><ul>${p.updatedTimeEntries.map(x=>`<li>${esc(x.activity||x.name||'')} · ${esc(x.date||'今天')} → ${x.set?.seconds?Math.round(x.set.seconds/60)+' 分钟':''}${x.set?.activity?' 改名为 '+esc(x.set.activity):''}</li>`).join('')}</ul>`);
+    if(invalidTimeUpdates(p).length)bits.push('<p>没有找到唯一对应的原计时记录，或新时长无效。请补充日期和准确的记录名称；这次不会保存。</p>');
     if(taskProblems(p))bits.push('<p>有任务名称重复、没有匹配的任务，或新日期不明确。请注明任务原日期和目标日期后重新整理。</p>');
     if(p.timeEntries?.length)bits.push(`<b>将补记 ${p.timeEntries.length} 条时间</b><ul>${p.timeEntries.map(x=>`<li>${esc(x.activity||x.name||'未命名事项')} · ${esc(x.date||'今天')} · ${timeSeconds(x)?`${Math.round(timeSeconds(x)/60)} 分钟`:'时长待补充'}${(x.qty||1)>1?` · ${x.qty} 件`:''}</li>`).join('')}</ul>`);
     if(p.inventoryChanges?.length)bits.push(`<b>将更新 ${p.inventoryChanges.length} 项库存</b><ul>${stockList(p.inventoryChanges)}</ul>${stockProblems(p.inventoryChanges).length?'<p>有食材缺少数量、现有库存不足，或单位无法核算；请补充信息后重新整理。</p>':''}`);
@@ -154,7 +157,7 @@
     if(p.grocerySuggestions?.length)bits.push(`<b>建议采购</b><ul>${list(p.grocerySuggestions)}</ul>`);
     if(p.workloadInsight)bits.push(`<b>本周负荷</b><p>${esc(p.workloadInsight)}</p>`);
     if(p.estimationInsight)bits.push(`<b>节奏估计</b><p>${esc(p.estimationInsight)}</p>`);
-    return `<div style="color:#263229;font-size:14px">${esc(result.reply||'我已经整理好。')}</div>${bits.length?`<div style="margin-top:12px">${bits.join('')}</div>`:'<p style="margin-top:10px">暂时没有需要写入的内容。</p>'}${result.needsConfirmation&&bits.length&&!taskProblems(p)&&!p.timeEntries?.some(x=>!timeSeconds(x))?'<button class="add" id="lumiConfirm" style="margin-top:12px">确认写入 Lumi</button>':''}`;
+    return `<div style="color:#263229;font-size:14px">${esc(result.reply||'我已经整理好。')}</div>${bits.length?`<div style="margin-top:12px">${bits.join('')}</div>`:'<p style="margin-top:10px">暂时没有需要写入的内容。</p>'}${result.needsConfirmation&&bits.length&&!taskProblems(p)&&!invalidTimeUpdates(p).length&&!p.timeEntries?.some(x=>!timeSeconds(x))?'<button class="add" id="lumiConfirm" style="margin-top:12px">确认写入 Lumi</button>':''}`;
   }
 
   let asking=false;
@@ -186,12 +189,13 @@
 
   function apply(){
     if(!pending)return;const p=pending.preview||{};
+    if(invalidTimeUpdates(p).length){appendBubble('assistant','原计时记录没有唯一匹配上，我没有修改数据。请告诉我日期和记录的准确名称。');return}
     (p.createdTasks||[]).forEach((item,i)=>{const name=String(item.name||item.task||'').trim(),date=item.date;if(!name||!validDate(date))return;const existing=tasks.find(t=>t.date===date&&normalizeName(t.n)===normalizeName(name));if(existing){if(item.completed)existing.done=true;return}tasks.push({id:`lumi-${Date.now()}-${i}`,date,n:name,...classifyTask(name,new Date(date+'T12:00:00')),done:!!item.completed,minor:!!item.minor})});
     (p.completedTasks||[]).forEach(item=>{const [task]=resolveTask(item);if(task)task.done=true});
     (p.rescheduledTasks||[]).forEach(item=>{const [task]=resolveTask(item,true);const date=item.toDate||item.newDate||item.date;if(task&&/^\d{4}-\d{2}-\d{2}$/.test(date))task.date=date});
     (p.deletedTasks||[]).forEach(item=>{const matches=resolveTask(item);matches.forEach(task=>{const idx=tasks.indexOf(task);if(idx>=0){(window.magicianTrash=window.magicianTrash||[]).push(task);tasks.splice(idx,1)}})});
     (p.updatedTasks||[]).forEach(item=>{const [task]=resolveTask(item);if(task&&item.set){if('minor' in item.set)task.minor=!!item.set.minor;if('name' in item.set&&item.set.name)task.n=String(item.set.name).trim();if('date' in item.set&&validDate(item.set.date))task.date=item.set.date}});
-    (p.updatedTimeEntries||[]).forEach(item=>{const logs=window.magicianTimeLogs||[];const date=item.date||localToday();const match=logs.find(x=>x.date===date&&normalizeName(x.activity)===normalizeName(item.activity||item.name));if(match&&item.set){if('seconds' in item.set)match.seconds=Number(item.set.seconds);if('activity' in item.set)match.activity=item.set.activity}});
+    (p.updatedTimeEntries||[]).forEach(item=>{const [match]=matchingTimeEntries(item);if('seconds' in item.set)match.seconds=Number(item.set.seconds);if('activity' in item.set)match.activity=String(item.set.activity).trim()});
     (p.timeEntries||[]).forEach((entry,i)=>{const seconds=timeSeconds(entry),date=entry.date||localToday(),activity=entry.activity||entry.name||'Lumi 补记',qty=Number(entry.qty)||1;if(seconds>0&&!(window.magicianTimeLogs||[]).some(x=>x.date===date&&Number(x.seconds)===seconds&&normalizeName(x.activity)===normalizeName(activity)))(window.magicianTimeLogs=window.magicianTimeLogs||[]).unshift({id:Date.now()+i,date,activity,seconds,qty,manual:true})});
     if(p.inventoryChanges?.length){
       const inventory=window.magicianInventory=window.magicianInventory||[];
