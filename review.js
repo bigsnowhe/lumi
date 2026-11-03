@@ -37,10 +37,10 @@
   function projectEstimates(){
     const all=logs();if(!all.length)return '';
     const byActivity={};
-    all.forEach(x=>{const name=String(x.activity||x.name||'').trim();if(!name)return;if(!byActivity[name])byActivity[name]={total:0,count:0};byActivity[name].total+=Number(x.seconds||0);byActivity[name].count++});
+    all.forEach(x=>{const name=String(x.activity||x.name||'').trim();if(!name)return;if(!byActivity[name])byActivity[name]={total:0,count:0,units:0};const q=Number(x.qty)||1;byActivity[name].total+=Number(x.seconds||0);byActivity[name].count++;byActivity[name].units+=q});
     const sorted=Object.entries(byActivity).sort((a,b)=>b[1].total-a[1].total).slice(0,10);
     if(!sorted.length)return '';
-    return `<div class="module-card"><h3>项目时间估算</h3><p style="font-size:12px;color:var(--muted);margin-bottom:10px">基于历史记录的平均单次用时</p><table style="width:100%;border-collapse:collapse;font-size:12px">${sorted.map(([name,d])=>`<tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 4px">${esc(name)}</td><td style="padding:7px 4px;text-align:right;white-space:nowrap;color:#5a7a5e">${fmtH(Math.round(d.total/d.count))}/次</td><td style="padding:7px 4px;text-align:right;white-space:nowrap;color:var(--muted)">${d.count} 次</td><td style="padding:7px 4px;text-align:right;white-space:nowrap">${fmtH(d.total)}</td></tr>`).join('')}</table></div>`;
+    return `<div class="module-card"><h3>项目时间估算</h3><p style="font-size:12px;color:var(--muted);margin-bottom:10px">基于历史记录的平均单件用时</p><table style="width:100%;border-collapse:collapse;font-size:12px">${sorted.map(([name,d])=>`<tr style="border-bottom:1px solid var(--line)"><td style="padding:7px 4px">${esc(name)}</td><td style="padding:7px 4px;text-align:right;white-space:nowrap;color:#5a7a5e">${fmtH(Math.round(d.total/d.units))}/件</td><td style="padding:7px 4px;text-align:right;white-space:nowrap;color:var(--muted)">${d.units} 件</td><td style="padding:7px 4px;text-align:right;white-space:nowrap">${fmtH(d.total)}</td></tr>`).join('')}</table></div>`;
   }
   function showReview(){
     document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.module==='review'));
