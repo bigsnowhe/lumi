@@ -179,7 +179,7 @@
       if(hasActions&&/已处理|已写入|已加入|已记录|已补/.test(data.reply||''))data.reply='这是我准备写入的内容。请先核对下方预览，确认后才会保存。';
       if(!hasActions&&prepared.alreadyRecorded)data.reply=`${prepared.date} 的「${prepared.name}」已在 Done 和计时记录中，这次没有重复写入。`;
       else if(!hasActions&&/^(帮我|请|麻烦)?(写入|记入|补记|补写)/.test(text.trim()))data.reply='这次还没有形成可写入的记录，也没有改动日程。请写明日期、完成的事项和用时，我会先给你核对预览。';
-      data.preview=preview;pending=data;waiting.innerHTML=previewHtml(data);conversation.push({role:'assistant',content:data.reply||'我已经整理好。'});saveConversation();const confirm=waiting.querySelector('#lumiConfirm');if(confirm)confirm.onclick=apply;
+      data.preview=preview;pending=data;waiting.innerHTML=previewHtml(data)+(data._model?`<div style="font-size:10px;color:#aaa;margin-top:8px">model: ${data._model}</div>`:'');conversation.push({role:'assistant',content:data.reply||'我已经整理好。'});saveConversation();const confirm=waiting.querySelector('#lumiConfirm');if(confirm)confirm.onclick=apply;
     }catch(e){const raw=e.message||'请确认网络后重试';const message=`暂时无法整理：${raw.length>80?raw.slice(0,80)+'…':raw}`;waiting.textContent=message;conversation.push({role:'assistant',content:message});saveConversation()}
     finally{asking=false;button.disabled=false;const messages=document.querySelector('#lumiMessages');if(messages)messages.scrollTop=messages.scrollHeight}
   }
