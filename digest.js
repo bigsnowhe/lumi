@@ -174,7 +174,7 @@
       if(purchases.length){const parsedNames=new Set(purchases.map(x=>x.name));const unmatched=purchases.length>=(preview.inventoryChanges||[]).length?[]:(preview.inventoryChanges||[]).map(x=>typeof x==='string'?{name:x,amount:''}:{...x,amount:amountOf(x)}).filter(x=>!parsedNames.has(x.name));preview.inventoryChanges=[...purchases,...unmatched];data.needsConfirmation=true}
       else if(preview.inventoryChanges?.length){const consumption=/(用了|消耗|做菜|做饭|吃掉|用掉)/.test(text)&&!/(采购|入库|买了|购买)/.test(text);preview.inventoryChanges=preview.inventoryChanges.map(x=>typeof x==='string'?{name:x,amount:'',operation:consumption?'use':'add'}:{...x,amount:amountOf(x),operation:x.operation||x.action||x.type||(consumption?'use':'add')})}
       const prepared=prepareCompletion(preview,text,prior);
-      const hasActions=['createdTasks','completedTasks','rescheduledTasks','deletedTasks','updatedTasks','timeEntries','inventoryChanges','mealPlan'].some(key=>preview[key]?.length);
+      const hasActions=['createdTasks','completedTasks','rescheduledTasks','deletedTasks','updatedTasks','updatedTimeEntries','timeEntries','inventoryChanges','mealPlan'].some(key=>preview[key]?.length);
       data.needsConfirmation=hasActions;
       if(hasActions&&/已处理|已写入|已加入|已记录|已补/.test(data.reply||''))data.reply='这是我准备写入的内容。请先核对下方预览，确认后才会保存。';
       if(!hasActions&&prepared.alreadyRecorded)data.reply=`${prepared.date} 的「${prepared.name}」已在 Done 和计时记录中，这次没有重复写入。`;
