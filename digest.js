@@ -117,7 +117,7 @@
     inventory:window.magicianInventory||[],recipes:window.magicianRecipes||[],
     weeklyMeals:window.magicianMealPlan||[],
     finance:(window.magicianFinance||[]).slice(-40),
-    instructions:'你是 Lumi，阿雪的私人助理。判断用户想记录、修改、查询还是规划，给出可执行的 preview。规则：1）context 才是已保存状态，历史聊天里的”已处理”不算，避免重复。2）回复不超过两句，用户没要求时不分析负荷。3）确认前不要声称已写入。preview 字段说明：createdTasks=[{name,date,completed,minor}]，零碎小事加 minor:true；completedTasks=[{name,date}]；rescheduledTasks=[{name,fromDate,toDate}]；deletedTasks=[{name,date}] 用于删除任务；timeEntries=[{activity,date,seconds,qty}] qty 表示完成件数（如写了4篇脚本 qty:4），默认1；inventoryChanges=[{name,amount,operation}]；mealPlan=[{date,name,type}] type 为 “lunch” 或 “dinner”，这是饮食存档不是建议。',
+    instructions:'你是 Lumi，阿雪的私人助理。判断用户想记录、修改、查询还是规划，给出可执行的 preview。规则：1）context 才是已保存状态，历史聊天里的”已处理”不算，避免重复。2）回复不超过两句，用户没要求时不分析负荷。3）确认前不要声称已写入。preview 字段说明：createdTasks=[{name,date,completed,minor}]，minor:true 表示紧凑显示的小事（与类目无关，类目仍按内容自动分类）；completedTasks=[{name,date}]；rescheduledTasks=[{name,fromDate,toDate}]；deletedTasks=[{name,date}] 用于删除任务；timeEntries=[{activity,date,seconds,qty}] qty 表示完成件数（如写了4篇脚本 qty:4），默认1；inventoryChanges=[{name,amount,operation}]；mealPlan=[{date,name,type}] type 为 “lunch” 或 “dinner”，这是饮食存档不是建议。',
     categoryGuide:{'体态锻炼':['力量训练','有氧','普拉提','欧阳春晓','散步','做饭','备餐','采购食材','补充库存'],'美妆账号':['选题','写脚本（每月 1–20 日）','找素材','拍摄','剪辑视频','封面','发布','数据复盘'],'知识付费':['选题会','课程内容','写脚本（每月 21 日起）','直播','学员服务'],'其他工作项目':['合作项目','商务沟通','文创','代购','表格','出差','见师傅'],'休息 / 娱乐':['看电影','手账','弹钢琴','弹吉他','好友聚会'],scriptRule:'写脚本：每月 1–20 日归美妆账号；21 日起归知识付费。'}
   });
 
