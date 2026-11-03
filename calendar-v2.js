@@ -19,11 +19,13 @@
         const list=taskFor(date,i);
         const dow=date.getDay(),isTrainDay=[1,2,4,5].includes(dow);
         const tidx=list.findIndex(t=>t.n==='锻炼'),train=tidx>=0?list[tidx]:null;
-        const rest=train?list.filter((_,j)=>j!==tidx):list;
+        const minors=list.filter((t,j)=>t.minor&&j!==tidx);
+        const rest=list.filter((t,j)=>!t.minor&&j!==tidx&&t!==train);
         const done=list.filter(t=>t.done).length,total=list.length;
         const trainHtml=train?`<div class="training-slot">${taskCard(train)}</div>`:`<div class="training-slot off"></div>`;
+        const minorHtml=minors.map(t=>taskCard(t)).join('');
         const progress=total?`<span class="day-progress">${done}/${total}</span>`:'';
-        return `<div class="day ${today?'today':''}" data-day="${i}" data-date="${iso(date)}"><div class="day-title">周${name}<strong>${date.getDate()}</strong>${progress}</div>${trainHtml}${rest.map(t=>taskCard(t)).join('')||'<div class="empty">留一点空白</div>'}</div>`
+        return `<div class="day ${today?'today':''}" data-day="${i}" data-date="${iso(date)}"><div class="day-title">周${name}<strong>${date.getDate()}</strong>${progress}</div>${minorHtml}${trainHtml}${rest.map(t=>taskCard(t)).join('')||'<div class="empty">留一点空白</div>'}</div>`
       }).join('');
     } else if(view==='day'){
       title.textContent=`${calendarDate.getFullYear()} 年 ${calendarDate.getMonth()+1} 月 ${calendarDate.getDate()} 日`;

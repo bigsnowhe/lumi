@@ -60,7 +60,7 @@
     let tasks=JSON.parse(localStorage.getItem('magician-tasks')||'null')||[]; let undoFn=null;
     const week=document.querySelector('#week');
     const escapeTaskText=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-    function taskCard(t,compact=false){return `<div draggable="true" class="task ${escapeTaskText(t.c)} ${t.done?'done':''} ${compact?'compact':''} ${t.minor?'minor':''}" data-id="${escapeTaskText(t.id)}"><button type="button" class="check" aria-label="${t.done?'标记为未完成':'标记为已完成'}"></button>${compact||t.minor?'':`<span class="cat">${escapeTaskText(t.cat)}</span>`}${escapeTaskText(t.n)}</div>`}
+    function taskCard(t,compact=false){return `<div draggable="true" class="task ${t.minor?'':escapeTaskText(t.c)} ${t.done?'done':''} ${compact?'compact':''} ${t.minor?'minor':''}" data-id="${escapeTaskText(t.id)}"><button type="button" class="check" aria-label="${t.done?'标记为未完成':'标记为已完成'}"></button>${compact||t.minor?'':`<span class="cat">${escapeTaskText(t.cat)}</span>`}${escapeTaskText(t.n)}</div>`}
     function render(){
       document.querySelector('#viewTitle').textContent=view==='week'?'11 月 2 日 — 8 日':view==='month'?'2026 年 11 月':'周一 · 11 月 2 日';
       document.querySelectorAll('.view-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
