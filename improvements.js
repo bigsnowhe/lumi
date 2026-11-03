@@ -44,12 +44,12 @@
 
   // Timer: fixed activity list, sorted by today's relevance
   const timerList = document.querySelector('#timerTaskList');
-  const timerActivities = ['欧阳春晓','无氧','其他有氧','生活事项','写脚本（美妆）','找素材（美妆）','拍摄','剪辑','沟通','找素材（知识付费）','写作（知识付费）','娱乐'];
+  const timerActivities = ['欧阳春晓','无氧','其他有氧','生活事项','写脚本（美妆）','找素材（美妆）','拍摄','剪辑沟通','找素材（知识付费）','写作（知识付费）','娱乐'];
   const activityRelevance = name => {
     const today = tasks.filter(t => t.date === localToday() && !t.done).map(t => t.n.toLowerCase());
     const n = name.toLowerCase();
     if (today.some(t => t.includes(n) || n.includes(t))) return 0;
-    const catMap = {'欧阳春晓':'health','无氧':'health','其他有氧':'health','生活事项':'work','写脚本（美妆）':'beauty','找素材（美妆）':'beauty','拍摄':'beauty','剪辑':'beauty','沟通':'work','找素材（知识付费）':'course','写作（知识付费）':'course','娱乐':'rest'};
+    const catMap = {'欧阳春晓':'health','无氧':'health','其他有氧':'health','生活事项':'work','写脚本（美妆）':'beauty','找素材（美妆）':'beauty','拍摄':'beauty','剪辑沟通':'beauty','找素材（知识付费）':'course','写作（知识付费）':'course','娱乐':'rest'};
     const todayCats = new Set(tasks.filter(t => t.date === localToday() && !t.done).map(t => t.c));
     if (todayCats.has(catMap[name])) return 1;
     return 2;
