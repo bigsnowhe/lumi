@@ -7,14 +7,15 @@
   const side=document.querySelector('.side');
   const menuToggle=document.createElement('button');menuToggle.textContent='‹';menuToggle.title='收起左侧菜单';menuToggle.style.cssText='position:fixed;left:202px;top:196px;z-index:25;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #e7e5dd;color:#596057;font-size:20px;line-height:20px;box-shadow:0 4px 10px #0000000d';document.body.appendChild(menuToggle);
   let menuClosed=false;menuToggle.onclick=()=>{menuClosed=!menuClosed;side.style.display=menuClosed?'none':'';document.querySelector('.app').style.gridTemplateColumns=menuClosed?'1fr':'188px minmax(0,1fr)';menuToggle.style.left=menuClosed?'16px':'202px';menuToggle.textContent=menuClosed?'›':'‹';menuToggle.title=menuClosed?'展开左侧菜单':'收起左侧菜单'};
-  const mealFor=date=>(window.magicianMealPlan||[]).find(x=>(x.date||x.day)===date);
+  const mealFor=(date,type)=>(window.magicianMealPlan||[]).find(x=>(x.date||x.day)===date&&(x.type||'lunch')===type);
   const refreshMeals=()=>{
     document.querySelectorAll('.day').forEach(day=>{
-      let lunch=day.querySelector('.lunch-row');if(!lunch){lunch=document.createElement('div');lunch.className='lunch-row';lunch.style.cssText='margin:0 -2px 9px;padding:6px 5px;border-radius:6px;background:#f5f2e9;color:#8b8577;font-size:10px;border:1px solid #ede8dc';day.querySelector('.day-title')?.insertAdjacentElement('afterend',lunch)}
-      const meal=mealFor(day.dataset.date),label=`午餐 · ${meal?.name||meal?.recipe||meal?.meal||'尚未安排'}`;if(lunch.textContent!==label)lunch.textContent=label;
+      let mealRow=day.querySelector('.meal-row');if(!mealRow){mealRow=document.createElement('div');mealRow.className='meal-row';mealRow.style.cssText='margin:0 -2px 9px;padding:5px 5px;border-radius:6px;background:#f5f2e9;color:#8b8577;font-size:10px;border:1px solid #ede8dc;line-height:1.6';day.querySelector('.day-title')?.insertAdjacentElement('afterend',mealRow)}
+      const lunch=mealFor(day.dataset.date,'lunch'),dinner=mealFor(day.dataset.date,'dinner');
+      const label=`午餐 · ${lunch?.name||'—'}\n晚餐 · ${dinner?.name||'—'}`;if(mealRow.textContent!==label){mealRow.textContent='';mealRow.append(`午餐 · ${lunch?.name||'—'}`,Object.assign(document.createElement('br')),`晚餐 · ${dinner?.name||'—'}`)}
     });
     const now=new Date(),date=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    const value=document.querySelector('#openFood')?.closest('.panel')?.querySelector('.finance-row span:last-child');if(value)value.textContent=mealFor(date)?.name||mealFor(date)?.recipe||mealFor(date)?.meal||'尚未安排';
+    const value=document.querySelector('#openFood')?.closest('.panel')?.querySelector('.finance-row span:last-child');if(value)value.textContent=mealFor(date,'lunch')?.name||'尚未安排';
   };
   window.refreshMagicianMeals=refreshMeals;
   new MutationObserver(refreshMeals).observe(document.querySelector('#week'),{childList:true});refreshMeals();
@@ -116,7 +117,7 @@
     inventory:window.magicianInventory||[],recipes:window.magicianRecipes||[],
     weeklyMeals:window.magicianMealPlan||[],
     finance:(window.magicianFinance||[]).slice(-40),
-    instructions:'你是 Lumi。用户说完成了某事，就给出可执行的 preview；新事项用 createdTasks 的 name、date、completed:true，有用时同时给 timeEntries。当前 context 才代表已保存状态，历史回复中的”已处理”不算。避免重复记录；保留采购数量与单位，不猜测。简短回复，不主动输出负荷分析；只有用户要求复盘或规划时才分析。确认前不要声称已写入。对于零碎小事（如检查续费、取快递、回消息等不属于主要工作项的杂事），在 createdTasks 里加 minor:true，这类任务会紧凑显示。',
+    instructions:'你是 Lumi。用户说完成了某事，就给出可执行的 preview；新事项用 createdTasks 的 name、date、completed:true，有用时同时给 timeEntries。当前 context 才代表已保存状态，历史回复中的”已处理”不算。避免重复记录；保留采购数量与单位，不猜测。简短回复，不主动输出负荷分析；只有用户要求复盘或规划时才分析。确认前不要声称已写入。对于零碎小事（如检查续费、取快递、回消息等不属于主要工作项的杂事），在 createdTasks 里加 minor:true，这类任务会紧凑显示。mealPlan 支持午餐和晚餐：每条记录必须包含 date、name、type（”lunch”或”dinner”）。用户说”午餐是X”用 type:”lunch”，说”晚餐是Y”用 type:”dinner”。这是饮食存档记录，不是建议。',
     categoryGuide:{'体态锻炼':['力量训练','有氧','普拉提','欧阳春晓','散步','做饭','备餐','采购食材','补充库存'],'美妆账号':['选题','写脚本（每月 1–20 日）','找素材','拍摄','剪辑视频','封面','发布','数据复盘'],'知识付费':['选题会','课程内容','写脚本（每月 21 日起）','直播','学员服务'],'其他工作项目':['合作项目','商务沟通','文创','代购','表格','出差','见师傅'],'休息 / 娱乐':['看电影','手账','弹钢琴','弹吉他','好友聚会'],scriptRule:'写脚本：每月 1–20 日归美妆账号；21 日起归知识付费。'}
   });
 
@@ -140,7 +141,7 @@
     if(taskProblems(p))bits.push('<p>有任务名称重复、没有匹配的任务，或新日期不明确。请注明任务原日期和目标日期后重新整理。</p>');
     if(p.timeEntries?.length)bits.push(`<b>将补记 ${p.timeEntries.length} 条时间</b><ul>${p.timeEntries.map(x=>`<li>${esc(x.activity||x.name||'未命名事项')} · ${esc(x.date||'今天')} · ${timeSeconds(x)?`${Math.round(timeSeconds(x)/60)} 分钟`:'时长待补充'}</li>`).join('')}</ul>`);
     if(p.inventoryChanges?.length)bits.push(`<b>将更新 ${p.inventoryChanges.length} 项库存</b><ul>${stockList(p.inventoryChanges)}</ul>${stockProblems(p.inventoryChanges).length?'<p>有食材缺少数量、现有库存不足，或单位无法核算；请补充信息后重新整理。</p>':''}`);
-    if(p.mealPlan?.length)bits.push(`<b>本周午餐建议</b><ul>${list(p.mealPlan)}</ul>`);
+    if(p.mealPlan?.length)bits.push(`<b>饮食记录</b><ul>${p.mealPlan.map(x=>`<li>${esc(x.date||'日期待确认')} · ${esc(x.type==='dinner'?'晚餐':'午餐')} · ${esc(x.name||x.recipe||x.meal||'待确认')}</li>`).join('')}</ul>`);
     if(p.grocerySuggestions?.length)bits.push(`<b>建议采购</b><ul>${list(p.grocerySuggestions)}</ul>`);
     if(p.workloadInsight)bits.push(`<b>本周负荷</b><p>${esc(p.workloadInsight)}</p>`);
     if(p.estimationInsight)bits.push(`<b>节奏估计</b><p>${esc(p.estimationInsight)}</p>`);
@@ -189,7 +190,7 @@
         else if(stockOperation(item)==='add')inventory.push({name:item.name,amount:item.amount});
       }
     }
-    if(p.mealPlan?.length){const meals=window.magicianMealPlan=window.magicianMealPlan||[];p.mealPlan.forEach(meal=>{const date=meal.date||meal.day;if(!date)return;const i=meals.findIndex(x=>(x.date||x.day)===date);if(i>=0)meals[i]=meal;else meals.push(meal)})}
+    if(p.mealPlan?.length){const meals=window.magicianMealPlan=window.magicianMealPlan||[];p.mealPlan.forEach(meal=>{const date=meal.date||meal.day,type=meal.type||'lunch';if(!date)return;meal.type=type;const i=meals.findIndex(x=>(x.date||x.day)===date&&(x.type||'lunch')===type);if(i>=0)meals[i]=meal;else meals.push(meal)})}
     localStorage.setItem('magician-tasks',JSON.stringify(tasks));localStorage.setItem('magician-time-logs',JSON.stringify(window.magicianTimeLogs||[]));
     localStorage.setItem('magician-inventory',JSON.stringify(window.magicianInventory||[]));localStorage.setItem('magician-meal-plan',JSON.stringify(window.magicianMealPlan||[]));
     render();refreshTimeHint?.();refreshMeals();pushCloud?.();document.querySelector('#lumiConfirm')?.remove();appendBubble('assistant','已保存在本机。请看右上角同步状态；你也可以继续补充。');conversation.push({role:'assistant',content:'已保存在本机，请查看同步状态。'});saveConversation();toast('已更新记录，请查看同步状态');pending=null;
