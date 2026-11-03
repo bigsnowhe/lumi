@@ -2,8 +2,9 @@
   const b=document.createElement('button');
   b.innerHTML='✦&nbsp; Lumi';
   b.setAttribute('aria-label','打开 Lumi 助手');
-  b.style.cssText='position:fixed;left:22px;bottom:96px;z-index:25;background:#253229;color:#fff;padding:11px 15px;border-radius:10px;box-shadow:0 12px 28px #22302133;font-size:12px;font-weight:600';
+  b.style.cssText='position:fixed;left:22px;bottom:26px;z-index:35;background:#253229;color:#fff;padding:11px 15px;border-radius:10px;box-shadow:0 12px 28px #22302133;font-size:12px;font-weight:600';
   document.body.appendChild(b);
+  const lumiPanel=document.createElement('div');lumiPanel.id='lumiPanel';lumiPanel.style.cssText='display:none;position:fixed;left:22px;bottom:72px;z-index:34;width:420px;max-height:70vh;background:#fffefa;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(30,35,28,.18);flex-direction:column;overflow:hidden';document.body.appendChild(lumiPanel);
   const side=document.querySelector('.side');
   const menuToggle=document.createElement('button');menuToggle.textContent='‹';menuToggle.title='收起左侧菜单';menuToggle.style.cssText='position:fixed;left:202px;top:196px;z-index:25;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #e7e5dd;color:#596057;font-size:20px;line-height:20px;box-shadow:0 4px 10px #0000000d';document.body.appendChild(menuToggle);
   let menuClosed=false;menuToggle.onclick=()=>{menuClosed=!menuClosed;side.style.display=menuClosed?'none':'';document.querySelector('.app').style.gridTemplateColumns=menuClosed?'1fr':'188px minmax(0,1fr)';menuToggle.style.left=menuClosed?'16px':'202px';menuToggle.textContent=menuClosed?'›':'‹';menuToggle.title=menuClosed?'展开左侧菜单':'收起左侧菜单'};
@@ -32,7 +33,7 @@
   window.magicianLumiConversation=conversation;
   window.setMagicianLumiConversation=value=>{conversation=Array.isArray(value)?value.slice(-30):[];window.magicianLumiConversation=conversation;localStorage.setItem('magician-lumi-conversation',JSON.stringify(conversation));};
   const saveConversation=()=>{conversation=conversation.slice(-30);window.magicianLumiConversation=conversation;localStorage.setItem('magician-lumi-conversation',JSON.stringify(conversation));pushCloud?.()};
-  const chatStyle=document.createElement('style');chatStyle.textContent='.lumi-chat{height:min(45vh,420px);min-height:280px;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;background:#fffefa;overflow:hidden}.lumi-messages{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:16px}.lumi-bubble{max-width:min(82%,720px);padding:12px 15px;border-radius:14px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere}.lumi-bubble.user{align-self:flex-end;background:#e8eee6;color:#29382e}.lumi-bubble.assistant{align-self:flex-start;background:#f5f3ed;color:#33372f}.lumi-bubble ul{white-space:normal;padding-left:20px}.lumi-bubble p{margin:8px 0}.lumi-composer{border-top:1px solid var(--line);padding:13px;display:flex;gap:9px;align-items:flex-end;background:#fffefa}.lumi-composer textarea{flex:1;min-width:0;min-height:54px;max-height:170px;resize:vertical;padding:11px;border:1px solid var(--line);border-radius:9px;background:#faf9f5;font:inherit;line-height:1.5}.lumi-composer button{flex:none;height:40px}@media(max-width:720px){.lumi-chat{height:72vh}.lumi-bubble{max-width:94%}.lumi-composer{flex-direction:column;align-items:stretch}.lumi-composer button{width:100%}}';document.head.appendChild(chatStyle);
+  const chatStyle=document.createElement('style');chatStyle.textContent='#lumiPanel .lumi-messages{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:14px;max-height:calc(70vh - 120px)}.lumi-bubble{max-width:88%;padding:10px 13px;border-radius:12px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}.lumi-bubble.user{align-self:flex-end;background:#e8eee6;color:#29382e}.lumi-bubble.assistant{align-self:flex-start;background:#f5f3ed;color:#33372f}.lumi-bubble ul{white-space:normal;padding-left:18px;margin:6px 0}.lumi-bubble p{margin:6px 0}#lumiPanel .lumi-composer{border-top:1px solid var(--line);padding:12px;display:flex;gap:8px;align-items:flex-end;background:#fffefa;border-radius:0 0 16px 16px}#lumiPanel .lumi-composer textarea{flex:1;min-width:0;min-height:48px;max-height:120px;resize:vertical;padding:9px;border:1px solid var(--line);border-radius:8px;background:#faf9f5;font:inherit;font-size:13px;line-height:1.5}#lumiPanel .lumi-composer button{flex:none;height:38px;font-size:12px}@media(max-width:720px){#lumiPanel{left:10px!important;right:10px!important;width:auto!important;max-height:80vh!important}}';document.head.appendChild(chatStyle);
   const appendBubble=(role,content,html=false)=>{const list=document.querySelector('#lumiMessages');if(!list)return null;const node=document.createElement('div');node.className=`lumi-bubble ${role}`;if(html)node.innerHTML=content;else node.textContent=content;list.appendChild(node);list.scrollTop=list.scrollHeight;return node};
   const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   const list=v=>Array.isArray(v)&&v.length?v.map(x=>`<li>${esc(typeof x==='string'?x:(x.name||x.activity||x.summary||JSON.stringify(x)))}</li>`).join(''):'';
@@ -136,15 +137,20 @@
   }};
 
   function open(){
-    home.style.display='none';panel.classList.add('open');
-    panel.innerHTML=`<div class="module-head"><div><h2>Lumi</h2><p>接着聊就好。涉及任务、库存或排餐时，我会先给你预览。</p></div><button class="back-home" id="lumiBack">← 返回主线一览</button></div><div class="lumi-chat"><div class="lumi-messages" id="lumiMessages"></div><div class="lumi-composer"><textarea id="lumiText" aria-label="给 Lumi 发消息" placeholder="继续告诉 Lumi，例如：那两盒各 250g；或者今天做饭用了两个鸡蛋。"></textarea><button class="add" id="lumiAsk">发送给 Lumi</button></div></div>`;
-    document.querySelector('#lumiBack').onclick=close;
-    document.querySelector('#lumiAsk').onclick=ask;
-    document.querySelector('#lumiText').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask()}};
-    if(!conversation.length)appendBubble('assistant','你可以直接把今天的清单或进展发给我。需要补充时，我们就在这里接着聊。');
-    else conversation.slice(-30).forEach(m=>appendBubble(m.role,m.content));
+    const isOpen=lumiPanel.style.display==='flex';
+    if(isOpen){lumiPanel.style.display='none';return}
+    lumiPanel.style.display='flex';
+    if(!lumiPanel.querySelector('#lumiMessages')){
+      lumiPanel.innerHTML=`<div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><div><b>Lumi</b> <span style="font-size:11px;color:var(--muted)">· 你的助手</span></div><button id="lumiClose" style="font-size:18px;color:var(--muted);padding:0 4px">×</button></div><div class="lumi-messages" id="lumiMessages"></div><div class="lumi-composer"><textarea id="lumiText" aria-label="给 Lumi 发消息" placeholder="告诉 Lumi，例如：做完了XX用了2小时"></textarea><button class="add" id="lumiAsk">发送</button></div>`;
+      lumiPanel.querySelector('#lumiClose').onclick=()=>{lumiPanel.style.display='none'};
+      lumiPanel.querySelector('#lumiAsk').onclick=ask;
+      lumiPanel.querySelector('#lumiText').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask()}};
+      if(!conversation.length)appendBubble('assistant','你可以直接把今天的清单或进展发给我。需要补充时，我们就在这里接着聊。');
+      else conversation.slice(-30).forEach(m=>appendBubble(m.role,m.content));
+    }
+    lumiPanel.querySelector('#lumiText')?.focus();
   }
-  function close(){panel.classList.remove('open');home.style.display='grid';document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.module==='home'))}
+  function close(){lumiPanel.style.display='none'}
 
   function previewHtml(result){
     const p=result.preview||{};
