@@ -203,7 +203,7 @@
     if(seconds>0){authStatus.textContent=`验证链接刚发送过，请先检查邮箱；${seconds} 秒后才能再次发送。`;return}
     sendingAuth=true;authSend.disabled=true;authStatus.textContent='正在发送…';
     try{
-      const r=await cloudRequest('/auth/v1/otp',{method:'POST',body:JSON.stringify({email,create_user:true,options:{emailRedirectTo:location.origin}})});
+      const r=await cloudRequest('/auth/v1/otp',{method:'POST',body:JSON.stringify({email,create_user:true,options:{emailRedirectTo:location.href.split(/[?#]/)[0]}})});
       if(!r.ok){let detail={};try{detail=await r.json()}catch{};if(r.status===429){const projectLimit=detail.code==='over_email_send_rate_limit'||/email rate limit/i.test(detail.message||'');authStatus.textContent=projectLimit?'发送验证邮件的额度已用完。Supabase 默认每小时只允许 2 封，请过一段时间再试；刷新页面不会重置额度。':'请求太频繁了，请至少等待 1 分钟再试；如果今天已多次发送，也可能需要等待约 1 小时。';return}throw new Error(`${r.status} ${detail.message||detail.error_description||'请稍后重试'}`)}
       localStorage.setItem('magician-auth-last-send',String(Date.now()));
       authStatus.textContent='验证链接已发送。请打开最新的一封邮件，并在手机浏览器中完成验证。';
