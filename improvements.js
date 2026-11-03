@@ -22,11 +22,12 @@
 
   // New task: form modal
   document.querySelector('#addTask').onclick = () => modal('新任务',
-    `<label>任务名称<input name="name" required placeholder="今天要做什么？"></label><label>日期<input name="date" type="date" required value="${fmt(calendarDate)}"></label><label>状态<select name="done"><option value="0">待完成</option><option value="1">已完成</option></select></label><label style="display:flex;align-items:center;gap:6px;margin-top:4px"><input type="checkbox" name="minor" value="1" style="width:auto"> 小事（紧凑显示，不占卡片空间）</label>`,
+    `<label>任务名称<input name="name" required placeholder="今天要做什么？"></label><label>日期<input name="date" type="date" required value="${fmt(calendarDate)}"></label><label>所属类目<select name="category"><option value="">自动识别</option><option value="health">体态锻炼</option><option value="beauty">美妆账号</option><option value="course">知识付费</option><option value="work">其他工作项目</option><option value="rest">休息 / 娱乐</option></select></label><label>状态<select name="done"><option value="0">待完成</option><option value="1">已完成</option></select></label><label style="display:flex;align-items:center;gap:6px;margin-top:4px"><input type="checkbox" name="minor" value="1" style="width:auto"> 小事（紧凑显示，不占卡片空间）</label>`,
     f => {
-      const n = String(f.get('name') || '').trim(), date = String(f.get('date') || '');
+      const n = String(f.get('name') || '').trim(), date = String(f.get('date') || ''), cat = String(f.get('category') || '');
       if (!n || !date) return false;
-      const type = classifyTask(n, new Date(date + 'T12:00:00'));
+      const catMap={health:'体态锻炼',beauty:'美妆账号',course:'知识付费',work:'其他工作项目',rest:'休息 / 娱乐'};
+      const type = cat && catMap[cat] ? {c:cat,cat:catMap[cat]} : classifyTask(n, new Date(date + 'T12:00:00'));
       tasks.push({ id: Date.now(), date, n, ...type, done: f.get('done') === '1', minor: !!f.get('minor') });
       render(); pushCloud?.(); toast(`已加入计划 · ${type.cat}`);
     });
