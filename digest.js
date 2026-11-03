@@ -2,9 +2,17 @@
   const b=document.createElement('button');
   b.innerHTML='✦&nbsp; Lumi';
   b.setAttribute('aria-label','打开 Lumi 助手');
-  b.style.cssText='position:fixed;right:22px;bottom:26px;z-index:35;background:#253229;color:#fff;padding:11px 15px;border-radius:10px;box-shadow:0 12px 28px #22302133;font-size:12px;font-weight:600';
+  b.style.cssText='position:fixed;right:22px;bottom:26px;z-index:35;background:#253229;color:#fff;padding:11px 15px;border-radius:10px;box-shadow:0 12px 28px #22302133;font-size:12px;font-weight:600;cursor:grab;user-select:none;touch-action:none';
   document.body.appendChild(b);
+  let dragging=false,dragMoved=false,dragX=0,dragY=0,btnLeft=0,btnTop=0;
+  const saveBtnPos=()=>{try{localStorage.setItem('lumi-btn-pos',JSON.stringify({right:b.style.right,bottom:b.style.bottom,left:b.style.left,top:b.style.top}))}catch{}};
+  try{const saved=JSON.parse(localStorage.getItem('lumi-btn-pos')||'null');if(saved){if(saved.left){b.style.left=saved.left;b.style.right='auto'}else{b.style.right=saved.right}if(saved.top){b.style.top=saved.top;b.style.bottom='auto'}else{b.style.bottom=saved.bottom}}}catch{}
+  b.addEventListener('pointerdown',e=>{if(e.button!==0)return;dragging=true;dragMoved=false;b.style.cursor='grabbing';const rect=b.getBoundingClientRect();dragX=e.clientX-rect.left;dragY=e.clientY-rect.top;btnLeft=rect.left;btnTop=rect.top;b.setPointerCapture(e.pointerId)});
+  b.addEventListener('pointermove',e=>{if(!dragging)return;const x=e.clientX-dragX,y=e.clientY-dragY;if(!dragMoved&&Math.abs(x-btnLeft)<4&&Math.abs(y-btnTop)<4)return;dragMoved=true;b.style.left=Math.max(0,Math.min(x,innerWidth-b.offsetWidth))+'px';b.style.top=Math.max(0,Math.min(y,innerHeight-b.offsetHeight))+'px';b.style.right='auto';b.style.bottom='auto';positionPanel()});
+  b.addEventListener('pointerup',()=>{if(dragging){dragging=false;b.style.cursor='grab';if(dragMoved){saveBtnPos();return}}});
+  b.addEventListener('click',e=>{if(dragMoved){e.preventDefault();e.stopPropagation();dragMoved=false;return}open()});
   const lumiPanel=document.createElement('div');lumiPanel.id='lumiPanel';lumiPanel.style.cssText='display:none;position:fixed;right:22px;bottom:72px;z-index:34;width:420px;max-height:70vh;background:#fffefa;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(30,35,28,.18);flex-direction:column;overflow:hidden';document.body.appendChild(lumiPanel);
+  function positionPanel(){if(lumiPanel.style.display==='none')return;const r=b.getBoundingClientRect(),pw=420,ph=Math.min(innerHeight*.7,500);let left=r.left,top=r.top-ph-8;if(left+pw>innerWidth-8)left=innerWidth-pw-8;if(left<8)left=8;if(top<8){top=r.bottom+8}lumiPanel.style.left=left+'px';lumiPanel.style.top=top+'px';lumiPanel.style.right='auto';lumiPanel.style.bottom='auto'}
   const side=document.querySelector('.side');
   const menuToggle=document.createElement('button');menuToggle.textContent='‹';menuToggle.title='收起左侧菜单';menuToggle.style.cssText='position:fixed;left:202px;top:196px;z-index:25;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #e7e5dd;color:#596057;font-size:20px;line-height:20px;box-shadow:0 4px 10px #0000000d';document.body.appendChild(menuToggle);
   let menuClosed=false;menuToggle.onclick=()=>{menuClosed=!menuClosed;side.style.display=menuClosed?'none':'';document.querySelector('.app').style.gridTemplateColumns=menuClosed?'1fr':'188px minmax(0,1fr)';menuToggle.style.left=menuClosed?'16px':'202px';menuToggle.textContent=menuClosed?'›':'‹';menuToggle.title=menuClosed?'展开左侧菜单':'收起左侧菜单'};
@@ -139,7 +147,7 @@
   function open(){
     const isOpen=lumiPanel.style.display==='flex';
     if(isOpen){lumiPanel.style.display='none';return}
-    lumiPanel.style.display='flex';
+    lumiPanel.style.display='flex';positionPanel();
     if(!lumiPanel.querySelector('#lumiMessages')){
       lumiPanel.innerHTML=`<div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><div><b>Lumi</b> <span style="font-size:11px;color:var(--muted)">· 你的助手</span></div><button id="lumiClose" style="font-size:18px;color:var(--muted);padding:0 4px">×</button></div><div class="lumi-messages" id="lumiMessages"></div><div class="lumi-composer"><textarea id="lumiText" aria-label="给 Lumi 发消息" placeholder="告诉 Lumi，例如：做完了XX用了2小时"></textarea><button class="add" id="lumiAsk">发送</button></div>`;
       lumiPanel.querySelector('#lumiClose').onclick=()=>{lumiPanel.style.display='none'};
@@ -241,5 +249,4 @@
     localStorage.setItem('magician-inventory',JSON.stringify(window.magicianInventory||[]));localStorage.setItem('magician-meal-plan',JSON.stringify(window.magicianMealPlan||[]));localStorage.setItem('magician-finance',JSON.stringify(window.magicianFinance||[]));localStorage.setItem('magician-recipes',JSON.stringify(window.magicianRecipes||[]));localStorage.setItem('magician-day-tags',JSON.stringify(window.magicianDayTags||[]));
     render();refreshTimeHint?.();refreshMeals();pushCloud?.();document.querySelector('#lumiConfirm')?.remove();appendBubble('assistant','已保存在本机。请看右上角同步状态；你也可以继续补充。');conversation.push({role:'assistant',content:'已保存在本机，请查看同步状态。'});saveConversation();toast('已更新记录，请查看同步状态');pending=null;
   }
-  b.onclick=open;
 })();
