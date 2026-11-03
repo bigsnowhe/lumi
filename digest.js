@@ -154,7 +154,7 @@
     if(p.grocerySuggestions?.length)bits.push(`<b>建议采购</b><ul>${list(p.grocerySuggestions)}</ul>`);
     if(p.workloadInsight)bits.push(`<b>本周负荷</b><p>${esc(p.workloadInsight)}</p>`);
     if(p.estimationInsight)bits.push(`<b>节奏估计</b><p>${esc(p.estimationInsight)}</p>`);
-    return `<div style="color:#263229;font-size:14px">${esc(result.reply||'我已经整理好。')}</div>${bits.length?`<div style="margin-top:12px">${bits.join('')}</div>`:'<p style="margin-top:10px">暂时没有需要写入的内容。</p>'}${result.needsConfirmation&&bits.length&&!taskProblems(p)&&!stockProblems(p.inventoryChanges||[]).length&&!p.timeEntries?.some(x=>!timeSeconds(x))?'<button class="add" id="lumiConfirm" style="margin-top:12px">确认写入 Lumi</button>':''}`;
+    return `<div style="color:#263229;font-size:14px">${esc(result.reply||'我已经整理好。')}</div>${bits.length?`<div style="margin-top:12px">${bits.join('')}</div>`:'<p style="margin-top:10px">暂时没有需要写入的内容。</p>'}${result.needsConfirmation&&bits.length&&!taskProblems(p)&&!p.timeEntries?.some(x=>!timeSeconds(x))?'<button class="add" id="lumiConfirm" style="margin-top:12px">确认写入 Lumi</button>':''}`;
   }
 
   let asking=false;
